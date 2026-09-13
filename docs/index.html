@@ -214,7 +214,7 @@
           <div class="eyebrow">Native macOS utility · 01</div>
           <h1>A better launch surface for the way you work.</h1>
           <p class="hero-copy">MiniPad puts your applications, media controls, and utility actions one deliberate gesture away—without turning your desktop into another dashboard.</p>
-          <div class="hero-actions"><a class="solid-button" href="https://github.com/egulsen10k-lgtm/MiniPad/releases/latest/download/MiniPad-Installer.dmg">⬇ Download MiniPad</a><a class="ghost-button" href="#product">See how it works</a></div>
+          <div class="hero-actions"><a class="solid-button" href="https://github.com/egulsen10k-lgtm/MiniPad/releases/latest/download/MiniPad-Installer.dmg">⬇ Download MiniPad</a><a class="ghost-button" href="#demo">See how it works</a></div>
           <div class="hero-meta"><span><i></i>Built with Swift + AppKit</span><span>macOS 13 and later</span><span>Designed for multiple displays</span></div>
         </div>
         <div class="window" aria-label="MiniPad interface preview">
@@ -333,6 +333,11 @@
     }, { passive: true });
 
     document.querySelectorAll('[data-edge]').forEach(button => button.addEventListener('click', () => {
+      document.querySelectorAll('[data-edge]').forEach(b => b.classList.remove('active')); button.classList.add('active');
+      const isRight = button.dataset.edge === 'right';
+      drawer.classList.toggle('right', isRight);
+      handle.classList.toggle('right', isRight);
+    }));
     handle.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleLauncher(); } });
     $('#drawerClose').addEventListener('click', () => { clearTimeout(autoHideTimer); drawer.classList.add('closed'); });
     const simStage = document.querySelector('.sim-stage');
