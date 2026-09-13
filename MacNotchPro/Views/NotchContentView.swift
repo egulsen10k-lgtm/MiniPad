@@ -622,6 +622,17 @@ struct ExpandedLaunchpadView: View {
                     }
                     .padding(.bottom, 4)
                 }
+
+                // Mini Spotify Bar at the very bottom
+                MiniSpotifyBottomBar(
+                    musicManager: musicManager,
+                    textColor: textColor,
+                    accentColor: accentColor,
+                    cardFillColor: cardFillColor,
+                    cardStrokeColor: cardStrokeColor
+                )
+                .padding(.horizontal, 16)
+                .padding(.bottom, 8)
             }
 
             // Grid Density & Animation Style Popup Modal
@@ -665,42 +676,9 @@ struct ExpandedLaunchpadView: View {
                 .transition(.scale(scale: 0.92).combined(with: .opacity))
             }
 
-            // Intercept clicks and make warning sound when Settings is open
-            if SettingsWindowManager.shared.isSettingsOpen {
-                Color.black.opacity(0.001)
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        SettingsWindowManager.shared.triggerWarningBeep()
-                    }
-                    .simultaneousGesture(
-                        DragGesture(minimumDistance: 5).onChanged { _ in
-                            SettingsWindowManager.shared.triggerWarningBeep()
-                        }
-                    )
-            }
-
-            // Intercept clicks when Settings is open (no beep — user disabled)
-            if SettingsWindowManager.shared.isSettingsOpen {
-                Color.black.opacity(0.001)
-                    .contentShape(Rectangle())
-                    .simultaneousGesture(
-                        DragGesture(minimumDistance: 5)
-                    )
-            }
-
-            // Mini Spotify Bar at the very bottom
-            MiniSpotifyBottomBar(
-                musicManager: musicManager,
-                textColor: textColor,
-                accentColor: accentColor,
-                cardFillColor: cardFillColor,
-                cardStrokeColor: cardStrokeColor
-            )
-            .padding(.horizontal, 16)
-            .padding(.bottom, 8)
-            .frame(maxHeight: .infinity, alignment: .bottom)
         }
         .frame(width: appSettings.launchpadWidth, height: appSettings.launchpadHeight)
+
         .onAppear {
             if launchpadState.isExpanded && appSettings.showWelcomeMessage && !welcomeDismissed {
                 withAnimation(.spring(response: 0.45, dampingFraction: 0.75)) {
