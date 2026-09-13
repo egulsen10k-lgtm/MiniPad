@@ -246,6 +246,7 @@
   <footer class="footer"><div class="wrap footer-inner"><span>© 2026 MiniPad · Built for macOS</span><span><a href="https://github.com/egulsen10k-lgtm/MiniPad">GitHub</a> · <a href="#top">Back to top ↑</a></span></div></footer>
 
   <script>
+    const isMobile = /Mobi|Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent) || window.innerWidth < 768;
     const apps = [
       ['Xcode','Developer'],['VS Code','Developer'],['Terminal','Developer'],['Docker','Developer'],['GitHub','Developer'],['Postman','Developer'],
       ['Notion','Productivity'],['Figma','Productivity'],['Linear','Productivity'],['Slack','Productivity'],['Obsidian','Productivity'],
@@ -274,7 +275,7 @@
         document.querySelectorAll('.tab').forEach(tab => tab.classList.toggle('active', tab.dataset.category === 'All'));
       }
       renderApps();
-      scheduleAutoHide();
+      if (!isMobile) scheduleAutoHide();
     }
     function toggleLauncher() {
       if (drawer.classList.contains('closed')) openLauncher();
@@ -292,16 +293,46 @@
     document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => setCategory(tab.dataset.category)));
     search.addEventListener('input', () => { query = search.value.toLowerCase().trim(); renderApps(); });
     const handle = $('#simHandle');
+    const hint = handle.querySelector('.handle-hint');
+
+    // Mobile: auto-open and update hint
+    if (isMobile) {
+      hint.textContent = 'Tap to open MiniPad';
+      setTimeout(openLauncher, 500);
+    }
+
+    // Desktop: hover interactions
+    if (!isMobile) {
+      handle.addEventListener('pointerenter', () => { clearTimeout(autoHideTimer); openLauncher(); });
+      handle.addEventListener('pointerleave', scheduleAutoHide);
+      drawer.addEventListener('pointerenter', () => { drawerHovering = true; clearTimeout(autoHideTimer); });
+      drawer.addEventListener('pointerleave', () => { drawerHovering = false; scheduleAutoHide(); });
+    }
+
+    // Mobile: tap handle to toggle
+    handle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleLauncher();
+    });
+
+    // Mobile: tap outside to close
+    document.addEventListener('click', (e) => {
+      if (isMobile && !drawer.classList.contains('closed') && !drawer.contains(e.target) && e.target !== handle && !handle.contains(e.target)) {
+        clearTimeout(autoHideTimer);
+        drawer.classList.add('closed');
+      }
+    });
+
+    // Mobile: scroll to open
+    let lastScrollY = window.scrollY;
+    window.addEventListener('scroll', () => {
+      if (isMobile && drawer.classList.contains('closed') && window.scrollY > lastScrollY + 100) {
+        openLauncher();
+      }
+      lastScrollY = window.scrollY;
+    }, { passive: true });
+
     document.querySelectorAll('[data-edge]').forEach(button => button.addEventListener('click', () => {
-      document.querySelectorAll('[data-edge]').forEach(b => b.classList.remove('active')); button.classList.add('active');
-      const isRight = button.dataset.edge === 'right';
-      drawer.classList.toggle('right', isRight);
-      handle.classList.toggle('right', isRight);
-    }));
-    handle.addEventListener('pointerenter', () => { clearTimeout(autoHideTimer); openLauncher(); });
-    handle.addEventListener('pointerleave', scheduleAutoHide);
-    drawer.addEventListener('pointerenter', () => { drawerHovering = true; clearTimeout(autoHideTimer); });
-    drawer.addEventListener('pointerleave', () => { drawerHovering = false; scheduleAutoHide(); });
     handle.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleLauncher(); } });
     $('#drawerClose').addEventListener('click', () => { clearTimeout(autoHideTimer); drawer.classList.add('closed'); });
     const simStage = document.querySelector('.sim-stage');
