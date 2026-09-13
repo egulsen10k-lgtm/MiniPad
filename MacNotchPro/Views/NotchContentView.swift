@@ -216,6 +216,8 @@ struct ExpandedLaunchpadView: View {
     var onAppLaunched: () -> Void
 
     @State private var showDensityPopup: Bool = false
+    @State private var showWelcomeBanner: Bool = false
+    @State private var welcomeDismissed: Bool = false
     
     var body: some View {
         let sidebarShowing = launchpadState.isExpanded && appManager.selectedCategory == .all && appManager.searchText.isEmpty
@@ -421,6 +423,24 @@ struct ExpandedLaunchpadView: View {
                 .padding(.horizontal, sidebarPadding)
                 .padding(.top, 12)
                 
+                // Welcoming Animation & Greeting Banner
+                if showWelcomeBanner && appSettings.showWelcomeMessage {
+                    WelcomingBannerView(
+                        textColor: textColor,
+                        accentColor: accentColor,
+                        cardFillColor: cardFillColor,
+                        cardStrokeColor: cardStrokeColor,
+                        onDismiss: {
+                            withAnimation(.easeOut(duration: 0.2)) {
+                                showWelcomeBanner = false
+                                welcomeDismissed = true
+                            }
+                        }
+                    )
+                    .padding(.horizontal, sidebarPadding)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                }
+                
                 // Embedded Recessed Search Bar Well
                 HStack(spacing: 8) {
                     Image(systemName: "magnifyingglass")
@@ -602,17 +622,6 @@ struct ExpandedLaunchpadView: View {
                     }
                     .padding(.bottom, 4)
                 }
-
-                // Mini Spotify Bar at the very bottom
-                MiniSpotifyBottomBar(
-                    musicManager: musicManager,
-                    textColor: textColor,
-                    accentColor: accentColor,
-                    cardFillColor: cardFillColor,
-                    cardStrokeColor: cardStrokeColor
-                )
-                .padding(.horizontal, 16)
-                .padding(.bottom, 8)
             }
 
             // Grid Density & Animation Style Popup Modal
@@ -669,8 +678,53 @@ struct ExpandedLaunchpadView: View {
                         }
                     )
             }
+
+            // Intercept clicks when Settings is open (no beep — user disabled)
+            if SettingsWindowManager.shared.isSettingsOpen {
+                Color.black.opacity(0.001)
+                    .contentShape(Rectangle())
+                    .simultaneousGesture(
+                        DragGesture(minimumDistance: 5)
+                    )
+            }
+
+            // Mini Spotify Bar at the very bottom
+            MiniSpotifyBottomBar(
+                musicManager: musicManager,
+                textColor: textColor,
+                accentColor: accentColor,
+                cardFillColor: cardFillColor,
+                cardStrokeColor: cardStrokeColor
+            )
+            .padding(.horizontal, 16)
+            .padding(.bottom, 8)
+            .frame(maxHeight: .infinity, alignment: .bottom)
         }
         .frame(width: appSettings.launchpadWidth, height: appSettings.launchpadHeight)
+        .onAppear {
+            if launchpadState.isExpanded && appSettings.showWelcomeMessage && !welcomeDismissed {
+                withAnimation(.spring(response: 0.45, dampingFraction: 0.75)) {
+                    showWelcomeBanner = true
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
+                    withAnimation(.easeOut(duration: 0.35)) {
+                        showWelcomeBanner = false
+                    }
+                }
+            }
+        }
+        .onChange(of: launchpadState.isExpanded) { expanded in
+            if expanded && appSettings.showWelcomeMessage && !welcomeDismissed {
+                withAnimation(.spring(response: 0.45, dampingFraction: 0.75)) {
+                    showWelcomeBanner = true
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
+                    withAnimation(.easeOut(duration: 0.35)) {
+                        showWelcomeBanner = false
+                    }
+                }
+            }
+        }
         .onChange(of: showDensityPopup) { isOpen in
             appManager.isModalOrPopupActive = isOpen
         }
@@ -2163,6 +2217,65 @@ struct ThemeBackground: View {
                 .overlay(
                     shape.stroke(Color.black.opacity(isHovered ? 0.25 : 0.12), lineWidth: 0.8)
                 )
+        }
+    }
+}
+
+// MARK: - Welcoming Banner View
+struct WelcomingBannerView: View {
+    let textColor: Color
+    let accentColor: Color
+    let cardFillColor: Color
+    let cardStrokeColor: Color
+    var onDismiss: () -> Void
+    
+    @State private var shimmer: Bool = false
+    
+    var greeting: String {
+        let hour = Calendar.current.component(.hour, from: Date())
+        if hour < 12 {
+            return "Good Morning! ✨ Welcome to MiniPad"
+        } else if hour < 18 {
+            return "Good Afternoon! ✨ Welcome to MiniPad"
+        } else {
+            return "Good Evening! ✨ Welcome to MiniPad"
+        }
+    }
+    
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "sparkles")
+                .font(.system(size: 13, weight: .bold))
+                .foregroundColor(.yellow)
+                .rotationEffect(.degrees(shimmer ? 360 : 0))
+                .animation(.linear(duration: 4).repeatForever(autoreverses: false), value: shimmer)
+            
+            Text(greeting)
+                .font(.system(size: 11.5, weight: .semibold, design: .rounded))
+                .foregroundColor(textColor)
+            
+            Spacer()
+            
+            Button(action: onDismiss) {
+                Image(systemName: "xmark")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundColor(textColor.opacity(0.6))
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 7)
+        .background(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(cardFillColor)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .stroke(accentColor.opacity(0.4), lineWidth: 1)
+                )
+                .shadow(color: accentColor.opacity(0.15), radius: 8, x: 0, y: 2)
+        )
+        .onAppear {
+            shimmer = true
         }
     }
 }

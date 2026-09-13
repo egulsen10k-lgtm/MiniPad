@@ -347,6 +347,11 @@ struct SettingsView: View {
                         .font(.caption2)
                         .foregroundColor(.secondary)
                 }
+                
+                Divider()
+                
+                Toggle("Show Welcome Animation & Greeting on Open", isOn: $settings.showWelcomeMessage)
+                    .font(.subheadline)
             }
         }
     }

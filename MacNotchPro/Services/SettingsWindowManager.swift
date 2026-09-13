@@ -20,7 +20,6 @@ class SettingsWindowManager: NSObject, NSWindowDelegate {
         let now = Date()
         if now.timeIntervalSince(lastBeepTime) > 1.2 {
             lastBeepTime = now
-            NSSound.beep()
             NSApp.activate(ignoringOtherApps: true)
         }
     }

@@ -3,351 +3,1235 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>MiniPad — A better launch surface for macOS</title>
-  <meta name="description" content="MiniPad is a native macOS launch surface for people who work across apps, displays, and full-screen spaces.">
-  <meta name="theme-color" content="#101114">
+  <title>MiniPad — Native macOS Launcher</title>
+  <meta name="description" content="MiniPad is a native macOS launch surface. Apps, media, utilities — one gesture away, always at the edge.">
+  <meta name="theme-color" content="#0d0c0a">
+  <meta property="og:title" content="MiniPad — Native macOS Launcher">
+  <meta property="og:description" content="Apps, media, utilities — one gesture away, always at the edge.">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    /* ─── Tokens ─────────────────────────────────────────────── */
     :root {
       color-scheme: dark;
-      --bg: #12110f;
-      --bg-deep: #0c0b0a;
-      --panel: #1b1916;
-      --panel-2: #24211c;
-      --panel-3: #302b24;
-      --line: #413b32;
-      --line-soft: rgba(255,244,220,.1);
-      --text: #f3eee4;
-      --muted: #b0a89c;
-      --quiet: #81796e;
-      --blue: #e0b36e;
-      --blue-strong: #b87935;
-      --green: #8cc39b;
-      --red: #e18d77;
+      --bg:        #0d0c0a;
+      --bg-deep:   #080706;
+      --surface:   #161410;
+      --surface-2: #1f1c17;
+      --surface-3: #2a2620;
+      --line:      #3a342b;
+      --line-soft: rgba(255,240,210,.08);
+      --text:      #f4efe5;
+      --muted:     #b2a99c;
+      --quiet:     #7a7268;
+      --accent:    #e8b86d;
+      --accent-hi: #c9912b;
+      --green:     #6db58a;
+      --red:       #e08870;
       --radius-sm: 8px;
       --radius-md: 14px;
       --radius-lg: 22px;
-      --radius-xl: 30px;
-      --shadow: 0 24px 70px rgba(0,0,0,.28);
-      --max: 1240px;
+      --radius-xl: 32px;
+      --shadow-md: 0 16px 48px rgba(0,0,0,.32);
+      --shadow-lg: 0 28px 80px rgba(0,0,0,.44);
+      --max: 1200px;
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans:  'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
-
     [data-theme="light"] {
       color-scheme: light;
-      --bg: #f1ede5;
-      --bg-deep: #e4ddd0;
-      --panel: #fbf8f2;
-      --panel-2: #f3eee5;
-      --panel-3: #e8dfd0;
-      --line: #cec3b2;
-      --line-soft: rgba(57,48,38,.13);
-      --text: #25211c;
-      --muted: #6d655b;
-      --quiet: #8c8274;
-      --blue: #7d592f;
-      --blue-strong: #965f28;
-      --green: #2c7048;
-      --red: #a6503c;
-      --shadow: 0 24px 70px rgba(66,55,41,.13);
+      --bg:        #f2ede4;
+      --bg-deep:   #e7e0d4;
+      --surface:   #faf7f1;
+      --surface-2: #f2ede4;
+      --surface-3: #e7dfd1;
+      --line:      #d0c6b6;
+      --line-soft: rgba(60,48,32,.1);
+      --text:      #221e18;
+      --muted:     #6a6258;
+      --quiet:     #8c8378;
+      --accent:    #8a5a1e;
+      --accent-hi: #a06620;
+      --green:     #2c7048;
+      --red:       #9e4a34;
+      --shadow-md: 0 16px 48px rgba(60,48,32,.1);
+      --shadow-lg: 0 28px 80px rgba(60,48,32,.14);
     }
 
-    * { box-sizing: border-box; }
+    /* ─── Reset ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; }
     html { scroll-behavior: smooth; }
     body {
-      margin: 0;
       background: var(--bg);
       color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
-      line-height: 1.5;
+      font-family: var(--font-sans);
+      font-size: 16px;
+      line-height: 1.6;
       -webkit-font-smoothing: antialiased;
     }
+    a { color: inherit; text-decoration: none; }
+    button, input, select { font: inherit; color: inherit; }
+    button { cursor: pointer; }
+    img { display: block; max-width: 100%; }
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+      html { scroll-behavior: auto !important; }
+    }
+
+    /* ─── Utility ────────────────────────────────────────────── */
+    .wrap { width: min(var(--max), calc(100% - 48px)); margin: 0 auto; }
+    .eyebrow {
+      display: inline-block;
+      color: var(--accent);
+      font: 600 .68rem/1.2 ui-monospace, monospace;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .serif { font-family: var(--font-serif); }
+
+    /* ─── Noise overlay ──────────────────────────────────────── */
     body::before {
       content: "";
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       pointer-events: none;
-      opacity: .24;
-      background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      z-index: 0;
+      opacity: .18;
+      background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
       background-size: 48px 48px;
-      mask-image: linear-gradient(to bottom, black, transparent 72%);
+      mask-image: linear-gradient(to bottom, black, transparent 60%);
     }
-    a { color: inherit; text-decoration: none; }
-    button, input, select { font: inherit; }
-    button { color: inherit; }
-    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
-    .wrap { width: min(var(--max), calc(100% - 48px)); margin: 0 auto; }
-    .eyebrow { color: var(--blue); font: 700 .72rem/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .12em; text-transform: uppercase; }
-    .muted { color: var(--muted); }
 
-    .site-header { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 90%, transparent); border-bottom: 1px solid var(--line-soft); backdrop-filter: blur(18px); }
-    .nav { min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
-    .brand { display: inline-flex; align-items: center; gap: 11px; font-weight: 720; letter-spacing: -.03em; }
-    .brand-mark { display: grid; place-items: center; width: 30px; height: 30px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel-2); color: var(--blue); font: 700 .78rem ui-monospace, monospace; }
-    .nav-links { display: flex; align-items: center; gap: 26px; color: var(--muted); font-size: .88rem; }
+    /* ─── Header ─────────────────────────────────────────────── */
+    .site-header {
+      position: sticky; top: 0; z-index: 50;
+      background: color-mix(in srgb, var(--bg) 85%, transparent);
+      border-bottom: 1px solid var(--line-soft);
+      backdrop-filter: blur(20px) saturate(150%);
+    }
+    .nav {
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 24px;
+      min-height: 68px;
+    }
+    .brand {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-weight: 700; letter-spacing: -.03em; font-size: .98rem;
+    }
+    .brand-mark {
+      width: 30px; height: 30px;
+      display: grid; place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: var(--surface-2);
+      color: var(--accent);
+      font: 700 .76rem ui-monospace, monospace;
+    }
+    .nav-links {
+      display: flex; align-items: center; gap: 28px;
+      color: var(--muted); font-size: .875rem;
+    }
     .nav-links a:hover { color: var(--text); }
     .nav-actions { display: flex; align-items: center; gap: 10px; }
-    .icon-button, .ghost-button, .solid-button { border: 1px solid var(--line); border-radius: 9px; background: var(--panel); cursor: pointer; transition: border-color .18s, background .18s, transform .18s; }
-    .icon-button { width: 36px; height: 36px; display: grid; place-items: center; color: var(--muted); }
-    .ghost-button, .solid-button { padding: 10px 15px; font-size: .84rem; font-weight: 650; }
-    .solid-button { border-color: var(--blue-strong); background: var(--blue-strong); color: #fff; }
-    .icon-button:hover, .ghost-button:hover { border-color: var(--blue); background: var(--panel-2); }
-    .solid-button:hover { transform: translateY(-1px); filter: brightness(1.08); }
 
-    .hero { padding: 112px 0 86px; }
-    .hero-grid { display: grid; grid-template-columns: minmax(0, 1.04fr) minmax(420px, .96fr); gap: 76px; align-items: center; }
-    h1, h2, h3, p { margin: 0; }
-    h1 { max-width: 760px; margin-top: 18px; font-size: clamp(3.1rem, 7vw, 6.3rem); font-weight: 680; letter-spacing: -.075em; line-height: .98; }
-    .hero-copy { max-width: 610px; margin-top: 25px; color: var(--muted); font-size: 1.13rem; line-height: 1.65; }
-    .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 34px; }
-    .hero-meta { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 25px; color: var(--quiet); font-size: .78rem; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-size: .84rem; font-weight: 600;
+      background: var(--surface);
+      transition: border-color .16s, background .16s, transform .16s, filter .16s;
+      white-space: nowrap;
+    }
+    .btn-icon {
+      width: 36px; height: 36px; padding: 0;
+      display: grid; place-items: center;
+      color: var(--muted);
+    }
+    .btn-ghost:hover { border-color: var(--accent); background: var(--surface-2); }
+    .btn-solid {
+      border-color: var(--accent-hi);
+      background: var(--accent-hi);
+      color: #fff;
+    }
+    .btn-solid:hover { transform: translateY(-1px); filter: brightness(1.1); }
+
+    /* ─── Hero ───────────────────────────────────────────────── */
+    .hero { padding: 108px 0 80px; position: relative; }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+      gap: 72px; align-items: center;
+    }
+    .hero-eyebrow { margin-bottom: 18px; }
+    h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(3rem, 6.5vw, 6rem);
+      font-weight: 900;
+      letter-spacing: -.03em;
+      line-height: .97;
+      color: var(--text);
+    }
+    h1 em { font-style: italic; color: var(--accent); }
+    .hero-copy {
+      max-width: 520px;
+      margin-top: 22px;
+      color: var(--muted);
+      font-size: 1.1rem;
+      line-height: 1.7;
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 32px; }
+    .hero-meta {
+      display: flex; flex-wrap: wrap; gap: 18px;
+      margin-top: 24px; color: var(--quiet); font-size: .78rem;
+    }
     .hero-meta span { display: inline-flex; align-items: center; gap: 7px; }
-    .hero-meta i { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+    .hero-meta i {
+      width: 6px; height: 6px;
+      border-radius: 50%; background: var(--green);
+      flex-shrink: 0;
+    }
 
-    .window { border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--panel); box-shadow: var(--shadow); overflow: hidden; }
-    .window-bar { height: 42px; display: flex; align-items: center; gap: 8px; padding: 0 15px; border-bottom: 1px solid var(--line-soft); background: var(--panel-2); }
+    /* ─── Window mockup ──────────────────────────────────────── */
+    .window {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: var(--surface);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+    }
+    .window-bar {
+      height: 42px; display: flex; align-items: center; gap: 8px;
+      padding: 0 15px;
+      border-bottom: 1px solid var(--line-soft);
+      background: var(--surface-2);
+    }
     .traffic { display: flex; gap: 6px; }
     .traffic i { display: block; width: 9px; height: 9px; border-radius: 50%; background: var(--line); }
-    .traffic i:first-child { background: #ff5f57; }.traffic i:nth-child(2) { background: #febc2e; }.traffic i:last-child { background: #28c840; }
-    .window-title { margin-left: auto; margin-right: auto; color: var(--quiet); font: .68rem ui-monospace, monospace; }
-    .window-body { position: relative; min-height: 420px; padding: 24px; background: linear-gradient(145deg, #151922, #0f1116 60%, #11151b); overflow: hidden; }
-    [data-theme="light"] .window-body { background: linear-gradient(145deg, #e8edf5, #f6f7f9 62%, #e3e9f1); }
-    .desktop-lines { position: absolute; inset: 0; opacity: .7; background: radial-gradient(ellipse at 72% 26%, rgba(75,133,208,.28), transparent 34%), radial-gradient(ellipse at 18% 82%, rgba(101,84,173,.18), transparent 40%); }
-    .desktop-content { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; opacity: .62; }
-    .desktop-card { height: 112px; border: 1px solid rgba(255,255,255,.12); border-radius: 12px; background: rgba(255,255,255,.055); }
-    .mini-drawer { position: absolute; z-index: 2; top: 62px; left: 24px; width: min(330px, calc(100% - 48px)); padding: 14px; border: 1px solid rgba(255,255,255,.2); border-radius: 18px; background: rgba(22,25,32,.82); box-shadow: 0 22px 55px rgba(0,0,0,.34), inset 0 1px rgba(255,255,255,.12); backdrop-filter: blur(30px) saturate(130%); }
-    .mini-drawer.right { left: auto; right: 24px; }
-    .drawer-header { display: flex; gap: 8px; align-items: center; margin-bottom: 14px; }
-    .search { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid rgba(255,255,255,.14); border-radius: 8px; background: rgba(255,255,255,.07); color: rgba(255,255,255,.7); }
-    .search input { width: 100%; border: 0; outline: 0; background: transparent; color: #fff; font-size: .75rem; }
-    .search input::placeholder { color: rgba(255,255,255,.46); }
-    .drawer-close { border: 0; background: transparent; color: rgba(255,255,255,.5); cursor: pointer; font-size: 1rem; }
-    .app-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
-    .app { padding: 8px 3px; border: 1px solid transparent; border-radius: 9px; text-align: center; cursor: pointer; }
-    .app:hover { border-color: rgba(255,255,255,.16); background: rgba(255,255,255,.08); }
-    .app-icon { width: 36px; height: 36px; margin: 0 auto 5px; display: grid; place-items: center; border-radius: 10px; background: #2e7fe6; color: #fff; font-size: .72rem; font-weight: 750; box-shadow: 0 5px 14px rgba(0,0,0,.22); }
-    .app:nth-child(2n) .app-icon { background: #814bd4; }.app:nth-child(3n) .app-icon { background: #db6b3d; }.app:nth-child(4n) .app-icon { background: #2e9d76; }
-    .app-name { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: rgba(255,255,255,.8); font-size: .65rem; }
-    .drawer-footer { display: flex; align-items: center; gap: 9px; margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.11); color: rgba(255,255,255,.72); font-size: .69rem; }
-    .album { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 6px; background: #b74b66; color: #fff; font-size: .65rem; }
-    .track { flex: 1; min-width: 0; }.track strong, .track span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }.track span { color: rgba(255,255,255,.44); font-size: .62rem; }
-    .music-button { border: 0; background: transparent; color: rgba(255,255,255,.76); cursor: pointer; }
-
-    section { padding: 96px 0; }
-    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 40px; margin-bottom: 34px; }
-    h2 { max-width: 650px; margin-top: 12px; font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 650; letter-spacing: -.06em; line-height: 1.03; }
-    .section-intro { max-width: 450px; color: var(--muted); line-height: 1.65; }
-    .stats { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-    .stat { padding: 22px 20px 23px 0; border-right: 1px solid var(--line); }.stat:not(:first-child) { padding-left: 20px; }.stat:last-child { border-right: 0; }
-    .stat strong { display: block; font-size: 1.65rem; letter-spacing: -.05em; }.stat span { display: block; margin-top: 4px; color: var(--muted); font-size: .78rem; }
-
-    .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-    .feature { min-height: 240px; padding: 24px; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--panel); transition: transform .2s, border-color .2s; }.feature:hover { transform: translateY(-3px); border-color: #596270; }
-    .feature-number { color: var(--quiet); font: .72rem ui-monospace, monospace; }.feature h3 { margin-top: 52px; font-size: 1.16rem; letter-spacing: -.025em; }.feature p { margin-top: 9px; color: var(--muted); font-size: .88rem; line-height: 1.6; }
-
-    .demo-section { padding-top: 70px; }.demo-shell { padding: 18px; border: 1px solid var(--line); border-radius: var(--radius-xl); background: var(--panel); box-shadow: var(--shadow); }
-    .demo-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 4px 2px 18px; }.demo-toolbar h3 { font-size: 1rem; }.demo-toolbar p { margin-top: 3px; color: var(--muted); font-size: .78rem; }.segmented { display: flex; gap: 3px; padding: 3px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel-2); }.segmented button { border: 0; border-radius: 6px; padding: 7px 11px; background: transparent; color: var(--muted); font-size: .76rem; cursor: pointer; }.segmented button.active { background: var(--panel-3); color: var(--text); }
-    .sim-stage { position: relative; min-height: 520px; border: 1px solid var(--line); border-radius: var(--radius-md); overflow: hidden; background: #171411; }.sim-stage .window-bar { position: relative; z-index: 3; background: rgba(24,20,16,.78); }.sim-wallpaper { position: absolute; inset: 42px 0 0; background: radial-gradient(ellipse at 75% 20%, rgba(174,119,53,.28), transparent 34%), radial-gradient(ellipse at 22% 76%, rgba(112,72,108,.24), transparent 35%), linear-gradient(145deg, #292117, #131110 65%); }.sim-wallpaper::after { content: ""; position: absolute; inset: 0; opacity: .25; background-image: linear-gradient(115deg, transparent 0 45%, rgba(255,255,255,.05) 45.2% 45.4%, transparent 45.6%); background-size: 180px 180px; }
-    .sim-menu { position: absolute; z-index: 2; top: 42px; left: 0; right: 0; height: 27px; display: flex; justify-content: space-between; align-items: center; padding: 0 12px; color: rgba(255,255,255,.75); background: rgba(10,12,16,.45); border-bottom: 1px solid rgba(255,255,255,.08); font-size: .62rem; }.sim-menu-left, .sim-menu-right { display: flex; gap: 13px; }
-    .sim-handle { position: absolute; z-index: 6; top: 50%; left: 0; display: flex; align-items: center; transform: translateY(-50%); cursor: pointer; }.sim-handle.right { left: auto; right: 0; flex-direction: row-reverse; }.handle-tab { width: 12px; height: 86px; border: 1px solid rgba(255,239,210,.32); border-left: 0; border-radius: 0 8px 8px 0; background: rgba(255,247,232,.14); box-shadow: 0 5px 16px rgba(0,0,0,.22); transition: width .2s, height .2s, background .2s, border-radius .2s; }.sim-handle.right .handle-tab { border-left: 1px solid rgba(255,239,210,.32); border-right: 0; border-radius: 8px 0 0 8px; }.sim-handle[data-style="Glass pill"] .handle-tab { width: 17px; height: 112px; border: 1px solid rgba(255,244,220,.34); border-radius: 0 12px 12px 0; background: rgba(255,247,232,.2); backdrop-filter: blur(14px); }.sim-handle.right[data-style="Glass pill"] .handle-tab { border-radius: 12px 0 0 12px; }.sim-handle[data-style="Notch"] .handle-tab { width: 22px; height: 72px; border-radius: 0 10px 10px 0; background: rgba(11,10,9,.8); }.sim-handle.right[data-style="Notch"] .handle-tab { border-radius: 10px 0 0 10px; }.handle-hint { position: absolute; left: 23px; width: 132px; padding: 7px 9px; border: 1px solid rgba(255,239,210,.18); border-radius: 7px; background: rgba(24,20,16,.92); color: rgba(255,247,232,.82); font-size: .65rem; line-height: 1.25; opacity: 0; transform: translateX(-7px); pointer-events: none; transition: opacity .18s, transform .18s; white-space: nowrap; }.sim-handle.right .handle-hint { left: auto; right: 23px; transform: translateX(7px); }.sim-handle:hover .handle-hint, .sim-handle:focus-visible .handle-hint { opacity: 1; transform: translateX(0); }
-    .sim-drawer { position: absolute; z-index: 4; top: 88px; bottom: 22px; left: 20px; width: min(520px, calc(100% - 40px)); display: flex; flex-direction: column; padding: 15px; border: 1px solid rgba(255,255,255,.22); border-radius: 17px; background: rgba(19,23,31,.84); box-shadow: 0 24px 60px rgba(0,0,0,.44), inset 0 1px rgba(255,255,255,.15); backdrop-filter: blur(32px) saturate(130%); transform: translateX(0); transition: transform .38s cubic-bezier(.2,.8,.2,1), opacity .28s; overflow-y: auto; -webkit-overflow-scrolling: touch; }.sim-drawer.right { left: auto; right: 20px; }.sim-drawer.closed { transform: translateX(calc(-100% - 35px)); opacity: 0; pointer-events: none; }.sim-drawer.right.closed { transform: translateX(calc(100% + 35px)); }
-
-    /* Mobile-specific adjustments without fixed viewport pinning */
-    @media (max-width: 768px) {
-      .sim-stage { min-height: 420px !important; }
-      .sim-drawer { width: calc(100% - 24px) !important; left: 12px !important; right: 12px !important; }
+    .traffic i:first-child { background: #ff5f57; }
+    .traffic i:nth-child(2) { background: #febc2e; }
+    .traffic i:last-child  { background: #28c840; }
+    .window-title {
+      margin: 0 auto;
+      color: var(--quiet); font: .67rem ui-monospace, monospace;
     }
-    .sim-top { display: flex; gap: 8px; align-items: center; }.sim-search { flex: 1; display: flex; gap: 8px; align-items: center; padding: 9px 11px; border: 1px solid rgba(255,255,255,.14); border-radius: 9px; background: rgba(255,255,255,.06); }.sim-search input { width: 100%; border: 0; outline: 0; background: transparent; color: #fff; font-size: .8rem; }.sim-search input::placeholder { color: rgba(255,255,255,.45); }.sim-close { border: 0; background: transparent; color: rgba(255,255,255,.55); cursor: pointer; font-size: 1rem; }
-    .tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; padding: 12px 0 10px; }.tab { width: 100%; min-width: 0; height: 27px; padding: 0 5px; overflow: hidden; border: 1px solid rgba(255,255,255,.1); border-radius: 7px; background: transparent; color: rgba(255,255,255,.56); font-size: .63rem; line-height: 25px; text-align: center; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }.tab.active { border-color: rgba(255,255,255,.28); background: rgba(255,255,255,.13); color: #fff; }
-    .sim-app-grid { flex: 1; min-height: 250px; display: grid; grid-template-columns: repeat(5, 1fr); align-content: start; gap: 4px; overflow: auto; padding: 3px 0; }.sim-app { appearance: none; width: 100%; padding: 10px 3px 8px; border: 1px solid transparent; border-radius: 10px; text-align: center; cursor: pointer; background: transparent; color: rgba(255,255,255,.78); }.sim-app:hover { border-color: rgba(255,255,255,.15); background: rgba(255,255,255,.07); }.sim-app-icon { width: 42px; height: 42px; margin: auto; display: grid; place-items: center; border-radius: 11px; background: #b87935; color: #fff; font-size: .7rem; font-weight: 760; }.sim-app:nth-child(2n) .sim-app-icon { background: #8062a7; }.sim-app:nth-child(3n) .sim-app-icon { background: #b8664c; }.sim-app:nth-child(4n) .sim-app-icon { background: #4e9276; }.sim-app-name { display: block; margin-top: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: rgba(255,255,255,.78); font-size: .67rem; }.sim-empty { grid-column: 1/-1; padding: 35px 0; color: rgba(255,255,255,.5); text-align: center; font-size: .8rem; }
-    .sim-footer { display: flex; align-items: center; gap: 9px; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.1); color: rgba(255,255,255,.72); font-size: .7rem; }.sim-album { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 7px; background: #bb516d; }.sim-track { flex: 1; min-width: 0; }.sim-track strong, .sim-track small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }.sim-track small { color: rgba(255,255,255,.42); }.sim-control { border: 0; background: transparent; color: rgba(255,255,255,.75); cursor: pointer; }
-    .demo-controls { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 14px; }.control { display: grid; gap: 6px; color: var(--quiet); font: .67rem ui-monospace, monospace; text-transform: uppercase; letter-spacing: .05em; }.control select { width: 100%; padding: 9px 10px; border: 1px solid var(--line); border-radius: 8px; outline: 0; background: var(--panel-2); color: var(--text); font-size: .76rem; text-transform: none; letter-spacing: 0; }
+    .window-body {
+      position: relative; min-height: 400px; padding: 24px;
+      background: linear-gradient(145deg, #161a22, #0f1115 60%, #121620);
+      overflow: hidden;
+    }
+    [data-theme="light"] .window-body {
+      background: linear-gradient(145deg, #e7dfd4, #f5f1ea 60%, #ddd5c6);
+    }
+    .desktop-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 70% 22%, rgba(70,120,200,.22), transparent 36%),
+        radial-gradient(ellipse at 20% 80%, rgba(90,70,160,.16), transparent 38%);
+    }
+    .desktop-cards {
+      position: relative; z-index: 1;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+      opacity: .55;
+    }
+    .desktop-card {
+      height: 96px;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 12px;
+      background: rgba(255,255,255,.045);
+    }
+    /* The floating drawer preview */
+    .preview-drawer {
+      position: absolute; z-index: 3; top: 56px; left: 20px;
+      width: min(300px, calc(100% - 40px));
+      padding: 13px;
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 16px;
+      background: rgba(18,22,30,.85);
+      box-shadow: 0 20px 52px rgba(0,0,0,.38), inset 0 1px rgba(255,255,255,.1);
+      backdrop-filter: blur(28px) saturate(130%);
+    }
+    .preview-search {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 10px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 8px;
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.65);
+      font-size: .73rem;
+      margin-bottom: 12px;
+    }
+    .preview-apps {
+      display: grid; grid-template-columns: repeat(4,1fr); gap: 4px;
+    }
+    .preview-app {
+      padding: 7px 3px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .preview-icon {
+      width: 34px; height: 34px;
+      margin: 0 auto 4px;
+      display: grid; place-items: center;
+      border-radius: 9px;
+      background: #2a72d4;
+      color: #fff;
+      font-size: .67rem; font-weight: 700;
+      box-shadow: 0 4px 12px rgba(0,0,0,.2);
+    }
+    .preview-app:nth-child(2n) .preview-icon { background: #7944c2; }
+    .preview-app:nth-child(3n) .preview-icon { background: #c85e30; }
+    .preview-app:nth-child(4n) .preview-icon { background: #2a8a66; }
+    .preview-app-name {
+      display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      color: rgba(255,255,255,.75); font-size: .6rem;
+    }
+    .preview-footer {
+      display: flex; align-items: center; gap: 8px;
+      margin-top: 11px; padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,.1);
+      color: rgba(255,255,255,.7); font-size: .65rem;
+    }
+    .preview-album {
+      width: 26px; height: 26px; flex-shrink: 0;
+      display: grid; place-items: center;
+      border-radius: 6px; background: #a84060;
+      font-size: .6rem;
+    }
+    .preview-track { flex: 1; min-width: 0; }
+    .preview-track strong, .preview-track span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .preview-track span { color: rgba(255,255,255,.38); font-size: .58rem; }
 
-    .comparison { display: grid; grid-template-columns: .75fr 1.25fr; gap: 60px; align-items: start; }.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--panel); }.table { width: 100%; min-width: 650px; border-collapse: collapse; font-size: .8rem; }.table th, .table td { padding: 15px 16px; border-bottom: 1px solid var(--line); text-align: left; }.table th { color: var(--quiet); font: 700 .66rem ui-monospace, monospace; letter-spacing: .08em; text-transform: uppercase; }.table tr:last-child td { border-bottom: 0; }.table td:first-child { color: var(--text); font-weight: 600; }.yes { color: var(--green); }.no { color: var(--quiet); }.note { margin-top: 16px; color: var(--quiet); font-size: .72rem; }
+    /* ─── Stats bar ───────────────────────────────────────────── */
+    .stats {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .stat {
+      padding: 22px 20px;
+      border-right: 1px solid var(--line);
+    }
+    .stat:last-child { border-right: 0; }
+    .stat strong {
+      display: block;
+      font-family: var(--font-serif);
+      font-size: 2rem; font-weight: 700;
+      letter-spacing: -.04em;
+    }
+    .stat span { display: block; margin-top: 4px; color: var(--muted); font-size: .8rem; }
 
-    .architecture { display: grid; grid-template-columns: .8fr 1.2fr; gap: 50px; align-items: start; }.code-panel { overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-md); background: #121419; }.code-tabs { display: flex; gap: 3px; padding: 8px; overflow-x: auto; border-bottom: 1px solid rgba(255,255,255,.08); }.code-tab { flex: 0 0 auto; padding: 8px 10px; border: 0; border-radius: 6px; background: transparent; color: #7f8793; cursor: pointer; font-size: .72rem; }.code-tab.active { background: #262b34; color: #fff; }.code { display: none; min-height: 270px; margin: 0; padding: 23px; overflow: auto; color: #cbd3df; font: .76rem/1.75 ui-monospace, SFMono-Regular, Menlo, monospace; }.code.active { display: block; }.kw { color: #c792ea; }.type { color: #82b1ff; }.str { color: #c3e88d; }.comment { color: #687382; }
+    /* ─── Feature grid ────────────────────────────────────────── */
+    .features { padding: 88px 0; }
+    .section-head {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      gap: 40px; margin-bottom: 40px;
+    }
+    h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      font-weight: 800; letter-spacing: -.04em; line-height: 1.04;
+    }
+    .section-intro {
+      max-width: 420px; color: var(--muted);
+      font-size: .95rem; line-height: 1.7;
+    }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .feature {
+      padding: 26px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      transition: transform .2s, border-color .2s, background .2s;
+    }
+    .feature:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent);
+      background: var(--surface-2);
+    }
+    .feature-icon {
+      width: 40px; height: 40px;
+      display: grid; place-items: center;
+      border-radius: 10px;
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      font-size: 1.1rem;
+      margin-bottom: 18px;
+    }
+    .feature-label { color: var(--quiet); font: .68rem ui-monospace, monospace; }
+    .feature h3 { margin-top: 12px; font-size: 1.05rem; letter-spacing: -.02em; }
+    .feature p { margin-top: 8px; color: var(--muted); font-size: .875rem; line-height: 1.6; }
 
-    .quickstart { display: grid; grid-template-columns: .8fr 1.2fr; gap: 50px; align-items: center; padding-bottom: 110px; }.terminal { border: 1px solid var(--line); border-radius: var(--radius-md); overflow: hidden; background: #0e1014; }.terminal-top { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,.08); color: #737b87; font: .68rem ui-monospace, monospace; }.terminal-copy { border: 1px solid #343a46; border-radius: 6px; padding: 5px 8px; background: #1b2028; color: #cdd4de; cursor: pointer; font-size: .67rem; }.terminal pre { margin: 0; padding: 24px; overflow: auto; color: #d6e2d6; font: .8rem/1.8 ui-monospace, monospace; }.prompt { color: #75d69a; }.command { color: #f0f3f5; }
-    .footer { padding: 28px 0 50px; border-top: 1px solid var(--line); color: var(--quiet); font-size: .76rem; }.footer-inner { display: flex; justify-content: space-between; gap: 20px; }.footer a:hover { color: var(--text); }
+    /* ─── Demo section ────────────────────────────────────────── */
+    .demo { padding: 0 0 88px; }
+    .demo-shell {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background: var(--surface);
+      box-shadow: var(--shadow-md);
+    }
+    .demo-toolbar {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      padding: 4px 2px 20px;
+    }
+    .demo-toolbar h3 { font-size: 1rem; font-weight: 600; }
+    .demo-toolbar p { margin-top: 3px; color: var(--muted); font-size: .78rem; }
+    .segmented {
+      display: flex; gap: 3px; padding: 3px;
+      border: 1px solid var(--line); border-radius: 9px;
+      background: var(--surface-2);
+      flex-shrink: 0;
+    }
+    .segmented button {
+      border: 0; border-radius: 6px; padding: 7px 12px;
+      background: transparent; color: var(--muted); font-size: .76rem;
+    }
+    .segmented button.active { background: var(--surface-3); color: var(--text); }
 
-    @media (max-width: 950px) { .hero-grid, .comparison, .architecture, .quickstart { grid-template-columns: 1fr; gap: 38px; }.hero-grid { gap: 48px; }.feature-grid { grid-template-columns: repeat(2, 1fr); }.section-head { display: block; }.section-intro { margin-top: 17px; } }
-    @media (max-width: 680px) { .wrap { width: min(var(--max), calc(100% - 30px)); }.nav-links { display: none; }.hero { padding: 74px 0 58px; } h1 { font-size: clamp(2.75rem, 15vw, 4.7rem); }.hero-copy { font-size: 1rem; }.stats { grid-template-columns: repeat(2, 1fr); }.stat:nth-child(2) { border-right: 0; }.stat:nth-child(n+3) { border-top: 1px solid var(--line); }.feature-grid { grid-template-columns: 1fr; }.feature { min-height: 190px; }.feature h3 { margin-top: 36px; }.demo-toolbar { display: block; }.segmented { margin-top: 14px; width: max-content; }.sim-stage { min-height: 450px; }.sim-drawer { top: 80px; left: 12px; width: calc(100% - 24px); }.sim-drawer.right { right: 12px; }.tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }.sim-app-grid { grid-template-columns: repeat(4, 1fr); }.demo-controls { grid-template-columns: repeat(2, 1fr); }.footer-inner { display: block; }.footer-inner > * + * { display: block; margin-top: 10px; } }
-    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
-    .sim-handle[data-style="Minimal tab"] .handle-tab { position: relative; width: 24px; height: 90px; border: 1px solid rgba(20,22,28,.9); border-left: 0; border-radius: 0 12px 12px 0; background: rgba(20,22,28,.92); }
-    .sim-handle.right[data-style="Minimal tab"] .handle-tab { border-left: 1px solid rgba(255,255,255,.25); border-right: 0; border-radius: 12px 0 0 12px; }
-    .sim-handle[data-style="Glass pill"] .handle-tab { position: relative; width: 14px; height: 120px; border: 1px solid rgba(45,48,56,.95); border-left: 0; border-radius: 0 10px 10px 0; background: rgba(31,34,42,.94); backdrop-filter: blur(16px); box-shadow: 0 4px 16px rgba(0,0,0,.3); }
-    .sim-handle.right[data-style="Glass pill"] .handle-tab { border-left: 1px solid rgba(255,255,255,.35); border-right: 0; border-radius: 10px 0 0 10px; }
-    .sim-handle[data-style="Mini glow"] .handle-tab { width: 10px; height: 70px; border: 1px solid rgba(28,31,38,.95); border-left: 0; border-radius: 0 6px 6px 0; background: rgba(28,31,38,.96); box-shadow: 0 0 10px rgba(0,0,0,.32); }
-    .sim-handle.right[data-style="Mini glow"] .handle-tab { border-left: 1px solid rgba(255,255,255,.18); border-right: 0; border-radius: 6px 0 0 6px; }
-    .sim-handle[data-style="Minimal tab"] .handle-tab::after, .sim-handle[data-style="Glass pill"] .handle-tab::after { content: ""; position: absolute; left: 50%; top: 50%; width: 2px; height: 24px; border-radius: 2px; background: rgba(145,150,160,.58); transform: translate(-50%,-50%); }
-    .sim-handle.right[data-style="Minimal tab"] .handle-tab::after, .sim-handle.right[data-style="Glass pill"] .handle-tab::after { left: 50%; }
-    .handle-tab { border-color: rgba(25,27,33,.94); background: rgba(25,27,33,.94); }
-    .sim-handle.right .handle-tab, .sim-handle.right[data-style="Minimal tab"] .handle-tab, .sim-handle.right[data-style="Glass pill"] .handle-tab, .sim-handle.right[data-style="Mini glow"] .handle-tab { border-color: rgba(25,27,33,.94); }
-    button.sim-handle, button.sim-handle:hover, button.sim-handle:active, button.sim-handle:focus { appearance: none; -webkit-appearance: none; margin: 0; padding: 0; border: 0; outline: 0; background: transparent !important; box-shadow: none !important; }
-    [data-theme="light"] .app-name { color: var(--text); }
-    .sim-drawer.light-surface { color: #211d18; }
-    .sim-drawer.light-surface .sim-search { border-color: rgba(56,44,30,.18); background: rgba(62,48,32,.07); color: #211d18; }
-    .sim-drawer.light-surface .sim-search input { color: #211d18; }
-    .sim-drawer.light-surface .sim-search input::placeholder { color: rgba(33,29,24,.48); }
-    .sim-drawer.light-surface .tab { border-color: rgba(56,44,30,.16); color: rgba(33,29,24,.64); }
-    .sim-drawer.light-surface .tab.active { border-color: rgba(56,44,30,.28); background: rgba(56,44,30,.1); color: #211d18; }
-    .sim-drawer.light-surface .sim-app { color: #211d18; }
-    .sim-drawer.light-surface .sim-app:hover { border-color: rgba(56,44,30,.16); background: rgba(56,44,30,.07); }
-    .sim-drawer.light-surface .sim-app-name { color: #211d18; }
-    .sim-drawer.light-surface .sim-footer { border-color: rgba(56,44,30,.14); color: #211d18; }
-    .sim-drawer.light-surface .sim-track small { color: rgba(33,29,24,.56); }
-    .sim-drawer.light-surface .sim-control, .sim-drawer.light-surface .sim-close { color: #211d18; }
-    [data-theme="light"] .window-body { background: linear-gradient(145deg, #e7dfd1, #f7f3eb 62%, #ded4c4); }
-    [data-theme="light"] .desktop-lines { background: radial-gradient(ellipse at 72% 26%, rgba(164,124,70,.2), transparent 34%), radial-gradient(ellipse at 18% 82%, rgba(129,103,78,.14), transparent 40%); }
-    [data-theme="light"] .desktop-card { border-color: rgba(76,62,45,.14); background: rgba(255,253,248,.42); }
-    [data-theme="light"] .mini-drawer { border-color: rgba(76,62,45,.18); background: rgba(255,251,243,.78); box-shadow: 0 22px 55px rgba(66,55,41,.16), inset 0 1px rgba(255,255,255,.7); }
-    [data-theme="light"] .mini-drawer .search { border-color: rgba(76,62,45,.16); background: rgba(76,62,45,.06); color: #25211c; }
-    [data-theme="light"] .mini-drawer .search input, [data-theme="light"] .mini-drawer .drawer-close { color: #25211c; }
-    [data-theme="light"] .mini-drawer .drawer-footer { border-color: rgba(76,62,45,.13); color: #25211c; }
+    .sim-stage {
+      position: relative; min-height: 520px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md); overflow: hidden;
+      background: #141210;
+    }
+    .sim-stage .window-bar { position: relative; z-index: 3; background: rgba(20,18,14,.8); }
+    .sim-wallpaper {
+      position: absolute; inset: 42px 0 0;
+      background:
+        radial-gradient(ellipse at 72% 20%, rgba(180,120,50,.25), transparent 36%),
+        radial-gradient(ellipse at 20% 78%, rgba(105,68,115,.2), transparent 36%),
+        linear-gradient(145deg, #1e1a12, #0e0d0b 65%);
+    }
+    .sim-wallpaper::after {
+      content: "";
+      position: absolute; inset: 0; opacity: .2;
+      background-image: linear-gradient(115deg, transparent 45%, rgba(255,255,255,.04) 45.2% 45.4%, transparent 45.6%);
+      background-size: 180px 180px;
+    }
+    .sim-menu {
+      position: absolute; z-index: 2; top: 42px; left: 0; right: 0; height: 27px;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 12px;
+      color: rgba(255,255,255,.72);
+      background: rgba(8,10,14,.45);
+      border-bottom: 1px solid rgba(255,255,255,.07);
+      font-size: .62rem;
+    }
+    .sim-menu-left, .sim-menu-right { display: flex; gap: 14px; }
+    .sim-handle {
+      appearance: none; -webkit-appearance: none;
+      position: absolute; z-index: 6; top: 50%; left: 0;
+      display: flex; align-items: center;
+      transform: translateY(-50%);
+      border: 0; padding: 0; margin: 0;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+    .sim-handle.right { left: auto; right: 0; flex-direction: row-reverse; }
+    .handle-tab {
+      width: 22px; height: 88px;
+      border: 1px solid rgba(22,24,30,.94); border-left: 0;
+      border-radius: 0 11px 11px 0;
+      background: rgba(22,24,30,.94);
+      transition: width .18s, background .18s;
+    }
+    .sim-handle.right .handle-tab {
+      border-left: 1px solid rgba(255,255,255,.22);
+      border-right: 0; border-radius: 11px 0 0 11px;
+    }
+    .handle-tab::after {
+      content: "";
+      position: absolute; left: 50%; top: 50%;
+      width: 2px; height: 22px; border-radius: 2px;
+      background: rgba(140,145,155,.5);
+      transform: translate(-50%,-50%);
+    }
+    .handle-hint {
+      position: absolute; left: 28px; width: 128px;
+      padding: 7px 9px;
+      border: 1px solid rgba(255,239,210,.15);
+      border-radius: 7px;
+      background: rgba(20,18,14,.94);
+      color: rgba(255,244,224,.78);
+      font-size: .63rem; line-height: 1.3;
+      opacity: 0; pointer-events: none;
+      transform: translateX(-6px);
+      transition: opacity .18s, transform .18s;
+      white-space: nowrap;
+    }
+    .sim-handle.right .handle-hint { left: auto; right: 28px; transform: translateX(6px); }
+    .sim-handle:hover .handle-hint, .sim-handle:focus-visible .handle-hint { opacity: 1; transform: translateX(0); }
+
+    .sim-drawer {
+      position: absolute; z-index: 4;
+      top: 85px; bottom: 18px; left: 18px;
+      width: min(520px, calc(100% - 36px));
+      display: flex; flex-direction: column;
+      padding: 14px;
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 16px;
+      background: rgba(16,20,28,.86);
+      box-shadow: 0 24px 64px rgba(0,0,0,.46), inset 0 1px rgba(255,255,255,.14);
+      backdrop-filter: blur(32px) saturate(130%);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      transform: translateX(0);
+      transition: transform .38s cubic-bezier(.2,.8,.2,1), opacity .28s;
+    }
+    .sim-drawer.right { left: auto; right: 18px; }
+    .sim-drawer.closed { transform: translateX(calc(-100% - 32px)); opacity: 0; pointer-events: none; }
+    .sim-drawer.right.closed { transform: translateX(calc(100% + 32px)); }
+
+    .sim-top { display: flex; gap: 8px; align-items: center; }
+    .sim-search {
+      flex: 1; display: flex; gap: 8px; align-items: center;
+      padding: 9px 11px;
+      border: 1px solid rgba(255,255,255,.12); border-radius: 9px;
+      background: rgba(255,255,255,.055);
+    }
+    .sim-search input {
+      width: 100%; border: 0; outline: 0;
+      background: transparent; color: #fff; font-size: .8rem;
+    }
+    .sim-search input::placeholder { color: rgba(255,255,255,.4); }
+    .sim-close { border: 0; background: transparent; color: rgba(255,255,255,.5); font-size: 1rem; }
+
+    .tabs {
+      display: grid; grid-template-columns: repeat(3,minmax(0,1fr));
+      gap: 4px; padding: 11px 0 9px;
+    }
+    .tab {
+      width: 100%; height: 27px; padding: 0 5px; overflow: hidden;
+      border: 1px solid rgba(255,255,255,.09); border-radius: 7px;
+      background: transparent; color: rgba(255,255,255,.5);
+      font-size: .62rem; text-align: center;
+      text-overflow: ellipsis; white-space: nowrap;
+    }
+    .tab.active { border-color: rgba(255,255,255,.26); background: rgba(255,255,255,.11); color: #fff; }
+
+    .sim-app-grid {
+      flex: 1; min-height: 250px;
+      display: grid; grid-template-columns: repeat(5,1fr);
+      align-content: start; gap: 4px;
+      overflow: auto; padding: 2px 0;
+    }
+    .sim-app {
+      appearance: none; width: 100%;
+      padding: 10px 3px 8px;
+      border: 1px solid transparent; border-radius: 10px;
+      text-align: center; background: transparent;
+      color: rgba(255,255,255,.78);
+    }
+    .sim-app:hover { border-color: rgba(255,255,255,.14); background: rgba(255,255,255,.06); }
+    .sim-app-icon {
+      width: 42px; height: 42px; margin: auto;
+      display: grid; place-items: center;
+      border-radius: 11px; background: #b87935;
+      color: #fff; font-size: .68rem; font-weight: 700;
+    }
+    .sim-app:nth-child(2n) .sim-app-icon { background: #7a5aa0; }
+    .sim-app:nth-child(3n) .sim-app-icon { background: #b05e40; }
+    .sim-app:nth-child(4n) .sim-app-icon { background: #44886a; }
+    .sim-app-name {
+      display: block; margin-top: 6px;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      color: rgba(255,255,255,.75); font-size: .65rem;
+    }
+    .sim-empty { grid-column: 1/-1; padding: 32px 0; color: rgba(255,255,255,.45); text-align: center; font-size: .8rem; }
+
+    .sim-footer {
+      display: flex; align-items: center; gap: 9px;
+      margin-top: 10px; padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,.09);
+      color: rgba(255,255,255,.7); font-size: .68rem;
+    }
+    .sim-album { width: 28px; height: 28px; flex-shrink: 0; display: grid; place-items: center; border-radius: 6px; background: #b05068; }
+    .sim-track { flex: 1; min-width: 0; }
+    .sim-track strong, .sim-track small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sim-track small { color: rgba(255,255,255,.38); }
+    .sim-control { border: 0; background: transparent; color: rgba(255,255,255,.7); }
+
+    .demo-controls {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      gap: 10px; margin-top: 14px;
+    }
+    .control { display: grid; gap: 6px; color: var(--quiet); font: .66rem ui-monospace, monospace; text-transform: uppercase; letter-spacing: .06em; }
+    .control select {
+      width: 100%; padding: 9px 10px;
+      border: 1px solid var(--line); border-radius: 8px;
+      outline: 0; background: var(--surface-2); color: var(--text);
+      font-size: .76rem; text-transform: none; letter-spacing: 0;
+    }
+
+    /* Drawer light-surface variant */
+    .sim-drawer.light-surface { color: #1e1a14; }
+    .sim-drawer.light-surface .sim-search { border-color: rgba(60,46,28,.16); background: rgba(60,46,28,.06); }
+    .sim-drawer.light-surface .sim-search input { color: #1e1a14; }
+    .sim-drawer.light-surface .sim-search input::placeholder { color: rgba(32,26,18,.44); }
+    .sim-drawer.light-surface .tab { border-color: rgba(60,46,28,.14); color: rgba(32,26,18,.6); }
+    .sim-drawer.light-surface .tab.active { border-color: rgba(60,46,28,.26); background: rgba(60,46,28,.09); color: #1e1a14; }
+    .sim-drawer.light-surface .sim-app { color: #1e1a14; }
+    .sim-drawer.light-surface .sim-app:hover { border-color: rgba(60,46,28,.14); background: rgba(60,46,28,.06); }
+    .sim-drawer.light-surface .sim-app-name { color: #1e1a14; }
+    .sim-drawer.light-surface .sim-footer { border-color: rgba(60,46,28,.12); color: #1e1a14; }
+    .sim-drawer.light-surface .sim-track small { color: rgba(32,26,18,.5); }
+    .sim-drawer.light-surface .sim-control, .sim-drawer.light-surface .sim-close { color: #1e1a14; }
+
+    /* ─── Comparison table ────────────────────────────────────── */
+    .comparison-section { padding: 88px 0; }
+    .comparison-grid { display: grid; grid-template-columns: .8fr 1.2fr; gap: 60px; align-items: start; }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); }
+    .table { width: 100%; min-width: 600px; border-collapse: collapse; font-size: .82rem; }
+    .table th, .table td { padding: 15px 18px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
+    .table th { color: var(--quiet); font: 600 .64rem ui-monospace, monospace; letter-spacing: .08em; text-transform: uppercase; }
+    .table tr:last-child td { border-bottom: 0; }
+    .table td:first-child { color: var(--text); font-weight: 600; }
+    .yes { color: var(--green); font-weight: 600; }
+    .no { color: var(--quiet); }
+    .note { margin-top: 14px; color: var(--quiet); font-size: .72rem; line-height: 1.5; }
+
+    /* ─── Get started ─────────────────────────────────────────── */
+    .start-section { padding: 0 0 112px; }
+    .start-grid { display: grid; grid-template-columns: .85fr 1.15fr; gap: 52px; align-items: center; }
+    .terminal {
+      border: 1px solid var(--line); border-radius: var(--radius-md); overflow: hidden;
+      background: #0a0c10;
+    }
+    .terminal-top {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 15px;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+      color: #686e7a; font: .67rem ui-monospace, monospace;
+    }
+    .terminal-copy {
+      border: 1px solid #333a47; border-radius: 6px;
+      padding: 5px 9px; background: #181e28;
+      color: #c8d0de; font-size: .66rem;
+    }
+    .terminal-copy:hover { border-color: var(--accent); }
+    .terminal pre { margin: 0; padding: 22px; overflow-x: auto; color: #cddacc; font: .8rem/1.85 ui-monospace, monospace; }
+    .prompt { color: #6dca8a; }
+    .command { color: #eef2f6; }
+
+    /* ─── Social proof strip ──────────────────────────────────── */
+    .proof-strip {
+      padding: 40px 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .proof-inner { display: flex; align-items: center; justify-content: center; gap: 48px; flex-wrap: wrap; }
+    .proof-item { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: .875rem; }
+    .proof-item strong { color: var(--text); }
+    .proof-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--line); flex-shrink: 0; }
+
+    /* ─── Closing CTA ─────────────────────────────────────────── */
+    .closing {
+      padding: 112px 0;
+      text-align: center;
+      border-top: 1px solid var(--line);
+    }
+    .closing h2 { margin: 0 auto; max-width: 560px; font-size: clamp(2.2rem, 5vw, 4rem); }
+    .closing p { margin: 20px auto 0; max-width: 400px; color: var(--muted); font-size: 1.05rem; line-height: 1.65; }
+    .closing .hero-actions { justify-content: center; margin-top: 36px; }
+
+    /* ─── Footer ──────────────────────────────────────────────── */
+    .footer {
+      padding: 28px 0 44px;
+      border-top: 1px solid var(--line);
+      color: var(--quiet); font-size: .76rem;
+    }
+    .footer-inner { display: flex; justify-content: space-between; gap: 20px; align-items: center; }
+    .footer-links { display: flex; gap: 20px; }
+    .footer a:hover { color: var(--text); }
+
+    /* ─── Scroll reveal ───────────────────────────────────────── */
+    .reveal {
+      opacity: 0; transform: translateY(18px);
+      transition: opacity .5s ease, transform .5s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ─── Responsive ──────────────────────────────────────────── */
+    @media (max-width: 960px) {
+      .hero-grid, .comparison-grid, .start-grid { grid-template-columns: 1fr; gap: 40px; }
+      .feature-grid { grid-template-columns: repeat(2,1fr); }
+      .section-head { display: block; }
+      .section-intro { margin-top: 14px; }
+    }
+    @media (max-width: 680px) {
+      .wrap { width: min(var(--max), calc(100% - 28px)); }
+      .nav-links { display: none; }
+      .hero { padding: 72px 0 52px; }
+      h1 { font-size: clamp(2.6rem, 14vw, 4.4rem); }
+      .hero-copy { font-size: 1rem; }
+      .stats { grid-template-columns: repeat(2,1fr); }
+      .stat:nth-child(2) { border-right: 0; }
+      .stat:nth-child(n+3) { border-top: 1px solid var(--line); }
+      .feature-grid { grid-template-columns: 1fr; }
+      .demo-toolbar { display: block; }
+      .segmented { margin-top: 12px; }
+      .sim-stage { min-height: 440px; }
+      .sim-drawer { width: calc(100% - 24px) !important; left: 12px !important; right: 12px !important; }
+      .tabs { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .sim-app-grid { grid-template-columns: repeat(4,1fr); }
+      .demo-controls { grid-template-columns: repeat(2,1fr); }
+      .footer-inner { display: block; }
+      .footer-inner > * + * { display: block; margin-top: 10px; }
+      .proof-inner { gap: 24px; justify-content: flex-start; }
+    }
   </style>
 </head>
 <body>
+
+  <!-- ── Navigation ─────────────────────────────────────── -->
   <header class="site-header">
     <div class="wrap nav">
-      <a class="brand" href="#top" aria-label="MiniPad home"><span class="brand-mark">MP</span><span>MiniPad</span></a>
-      <nav class="nav-links" aria-label="Primary navigation"><a href="#product">Product</a><a href="#demo">Live demo</a><a href="#comparison">Why MiniPad</a><a href="#start">Get started</a></nav>
-      <div class="nav-actions"><button class="icon-button" id="themeToggle" aria-label="Toggle color theme">◐</button><a class="solid-button" href="https://github.com/egulsen10k-lgtm/MiniPad/releases/latest/download/MiniPad-Installer.dmg">Download MiniPad</a></div>
+      <a class="brand" href="#top" aria-label="MiniPad home">
+        <span class="brand-mark">MP</span>
+        <span>MiniPad</span>
+      </a>
+      <nav class="nav-links" aria-label="Primary navigation">
+        <a href="#product">Product</a>
+        <a href="#demo">Live demo</a>
+        <a href="#comparison">Why MiniPad</a>
+        <a href="#start">Get started</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="btn btn-icon btn-ghost" id="themeToggle" aria-label="Toggle color theme">◐</button>
+        <a class="btn btn-solid" href="https://github.com/egulsen10k-lgtm/MiniPad/releases/latest/download/MiniPad-Installer.dmg">⬇ Download</a>
+      </div>
     </div>
   </header>
 
   <main id="top">
+
+    <!-- ── Hero ───────────────────────────────────────────── -->
     <section class="hero">
       <div class="wrap hero-grid">
         <div>
-          <div class="eyebrow">Native macOS utility · 01</div>
-          <h1>A better launch surface for the way you work.</h1>
-          <p class="hero-copy">MiniPad puts your applications, media controls, and utility actions one deliberate gesture away—without turning your desktop into another dashboard.</p>
-          <div class="hero-actions"><a class="solid-button" href="https://github.com/egulsen10k-lgtm/MiniPad/releases/latest/download/MiniPad-Installer.dmg">⬇ Download MiniPad</a><a class="ghost-button" href="#demo">See how it works</a></div>
-          <div class="hero-meta"><span><i></i>Built with Swift + AppKit</span><span>macOS 13 and later</span><span>Designed for multiple displays</span></div>
+          <div class="hero-eyebrow reveal">
+            <span class="eyebrow">Native macOS · 01</span>
+          </div>
+          <h1 class="reveal" style="transition-delay:.05s">
+            The launch surface that stays<em> out of the way.</em>
+          </h1>
+          <p class="hero-copy reveal" style="transition-delay:.1s">
+            MiniPad puts your apps, media controls, and utility actions one deliberate gesture away — pinned to the edge, never cluttering the workspace you're protecting.
+          </p>
+          <div class="hero-actions reveal" style="transition-delay:.15s">
+            <a class="btn btn-solid" href="https://github.com/egulsen10k-lgtm/MiniPad/releases/latest/download/MiniPad-Installer.dmg">⬇ Download MiniPad</a>
+            <a class="btn btn-ghost" href="#demo">See live demo</a>
+          </div>
+          <div class="hero-meta reveal" style="transition-delay:.18s">
+            <span><i></i>Swift + AppKit, native</span>
+            <span>macOS 13 and later</span>
+            <span>Multiple displays</span>
+          </div>
         </div>
-        <div class="window" aria-label="MiniPad interface preview">
-          <div class="window-bar"><span class="traffic"><i></i><i></i><i></i></span><span class="window-title">minipad — workspace</span></div>
-          <div class="window-body"><div class="desktop-lines"></div><div class="desktop-content"><div class="desktop-card"></div><div class="desktop-card"></div><div class="desktop-card"></div><div class="desktop-card"></div></div><div class="mini-drawer"><div class="drawer-header"><div class="search">⌕ <input aria-label="Preview search" placeholder="Search applications" readonly></div><button class="drawer-close" aria-label="Close preview">×</button></div><div class="app-grid"><div class="app"><div class="app-icon">X</div><span class="app-name">Xcode</span></div><div class="app"><div class="app-icon">VS</div><span class="app-name">VS Code</span></div><div class="app"><div class="app-icon">◉</div><span class="app-name">Safari</span></div><div class="app"><div class="app-icon">N</div><span class="app-name">Notion</span></div><div class="app"><div class="app-icon">T</div><span class="app-name">Terminal</span></div><div class="app"><div class="app-icon">F</div><span class="app-name">Figma</span></div><div class="app"><div class="app-icon">M</div><span class="app-name">Music</span></div><div class="app"><div class="app-icon">A</div><span class="app-name">AppCleaner</span></div></div><div class="drawer-footer"><span class="album">♫</span><span class="track"><strong>Midnight City</strong><span>M83 · Spotify</span></span><span>‹</span><span>Ⅱ</span><span>›</span></div></div></div>
+
+        <!-- Window preview -->
+        <div class="window reveal" aria-label="MiniPad interface preview" style="transition-delay:.08s">
+          <div class="window-bar">
+            <span class="traffic"><i></i><i></i><i></i></span>
+            <span class="window-title">minipad — workspace</span>
+          </div>
+          <div class="window-body">
+            <div class="desktop-bg"></div>
+            <div class="desktop-cards">
+              <div class="desktop-card"></div>
+              <div class="desktop-card"></div>
+              <div class="desktop-card"></div>
+              <div class="desktop-card"></div>
+            </div>
+            <div class="preview-drawer" role="presentation">
+              <div class="preview-search">⌕ <span>Search applications</span></div>
+              <div class="preview-apps">
+                <div class="preview-app"><div class="preview-icon">X</div><span class="preview-app-name">Xcode</span></div>
+                <div class="preview-app"><div class="preview-icon">VS</div><span class="preview-app-name">VS Code</span></div>
+                <div class="preview-app"><div class="preview-icon">◉</div><span class="preview-app-name">Safari</span></div>
+                <div class="preview-app"><div class="preview-icon">N</div><span class="preview-app-name">Notion</span></div>
+                <div class="preview-app"><div class="preview-icon">T</div><span class="preview-app-name">Terminal</span></div>
+                <div class="preview-app"><div class="preview-icon">F</div><span class="preview-app-name">Figma</span></div>
+                <div class="preview-app"><div class="preview-icon">M</div><span class="preview-app-name">Music</span></div>
+                <div class="preview-app"><div class="preview-icon">A</div><span class="preview-app-name">Cleaner</span></div>
+              </div>
+              <div class="preview-footer">
+                <span class="preview-album">♫</span>
+                <span class="preview-track"><strong>Midnight City</strong><span>M83 · Spotify</span></span>
+                <span>‹</span><span>Ⅱ</span><span>›</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <section id="product">
+    <!-- ── Social proof strip ─────────────────────────────── -->
+    <div class="proof-strip reveal">
+      <div class="wrap proof-inner">
+        <div class="proof-item"><strong>100%</strong> native Swift — zero Electron</div>
+        <div class="proof-dot"></div>
+        <div class="proof-item"><strong>&lt; 25 MB</strong> memory footprint</div>
+        <div class="proof-dot"></div>
+        <div class="proof-item"><strong>120 Hz</strong> ProMotion animations</div>
+        <div class="proof-dot"></div>
+        <div class="proof-item"><strong>Open source</strong> on GitHub</div>
+      </div>
+    </div>
+
+    <!-- ── Product section ────────────────────────────────── -->
+    <section class="features" id="product">
       <div class="wrap">
-        <div class="section-head"><div><div class="eyebrow">Why it exists · 02</div><h2>The system should stay out of the way.</h2></div><p class="section-intro">MiniPad is built around the small moments that compound: launching a tool, changing a track, reaching an app on another display, or cleaning up software you no longer need.</p></div>
-        <div class="stats"><div class="stat"><strong>&lt; 25 MB</strong><span>Target memory footprint</span></div><div class="stat"><strong>120 Hz</strong><span>Motion designed for ProMotion</span></div><div class="stat"><strong>2 sides</strong><span>Pin to left or right edge</span></div><div class="stat"><strong>0 tabs</strong><span>No browser window required</span></div></div>
-        <div class="feature-grid" style="margin-top: 34px"><article class="feature"><span class="feature-number">01 / LAYOUT</span><h3>Adaptive by default</h3><p>Grid density and container sizing respond to the available display instead of forcing one fixed launcher geometry.</p></article><article class="feature"><span class="feature-number">02 / MOTION</span><h3>Persistent view hierarchy</h3><p>A stable AppKit host keeps open and close transitions composed, tactile, and ready for high-refresh displays.</p></article><article class="feature"><span class="feature-number">03 / MEDIA</span><h3>Native media controls</h3><p>Music playback and metadata live inside the launcher, keeping the most common controls close without a separate utility.</p></article><article class="feature"><span class="feature-number">04 / CLEANUP</span><h3>Better uninstall routing</h3><p>Route supported removals through AppCleaner when available, with a straightforward fallback to the system Trash.</p></article><article class="feature"><span class="feature-number">05 / PRIVACY</span><h3>A private utility shelf</h3><p>Keep sensitive shortcuts and developer tools in a PIN-protected Vault category instead of exposing everything at once.</p></article><article class="feature"><span class="feature-number">06 / DISPLAYS</span><h3>Display-aware placement</h3><p>Use connected-screen awareness to keep MiniPad where the work is, whether that is a laptop panel or an external display.</p></article><article class="feature"><span class="feature-number">07 / SEARCH</span><h3>Fast by muscle memory</h3><p>Type a few characters to narrow the surface instantly, with categories and labels that stay predictable as your app library grows.</p></article><article class="feature"><span class="feature-number">08 / FOCUS</span><h3>Quiet auto-hide</h3><p>When the launcher is no longer in use, it retreats to the edge instead of covering the workspace you are trying to protect.</p></article><article class="feature"><span class="feature-number">09 / CONTROL</span><h3>One surface, fewer utilities</h3><p>Keep launching, playback, cleanup, and private shortcuts in one intentional place rather than scattering them across menu-bar extras.</p></article><article class="feature"><span class="feature-number">10 / ACCESS</span><h3>Keyboard-ready interaction</h3><p>Every important control can be reached with a keyboard, while the handle remains discoverable for pointer and trackpad users.</p></article><article class="feature"><span class="feature-number">11 / SYSTEM</span><h3>Native permission boundaries</h3><p>Keep sensitive actions explicit and scoped, with the Vault and uninstall flows making their state clear before anything changes.</p></article><article class="feature"><span class="feature-number">12 / DETAIL</span><h3>Designed for repeat use</h3><p>Compact labels, restrained motion, and remembered preferences make the tenth interaction feel as considered as the first.</p></article></div>
+        <div class="section-head reveal">
+          <div>
+            <span class="eyebrow">Why it exists · 02</span>
+            <h2>One surface.<br>Fewer utilities.</h2>
+          </div>
+          <p class="section-intro">Built around the small moments that compound: launching a tool, changing a track, reaching an app on another display, cleaning up what you no longer need.</p>
+        </div>
+        <div class="stats reveal">
+          <div class="stat"><strong>&lt; 25 MB</strong><span>Target memory footprint</span></div>
+          <div class="stat"><strong>120 Hz</strong><span>ProMotion ready</span></div>
+          <div class="stat"><strong>2 sides</strong><span>Pin left or right edge</span></div>
+          <div class="stat"><strong>0 tabs</strong><span>No browser required</span></div>
+        </div>
+        <div class="feature-grid" style="margin-top:14px">
+          <article class="feature reveal">
+            <div class="feature-icon" aria-hidden="true">⊞</div>
+            <span class="feature-label">01 / LAYOUT</span>
+            <h3>Adaptive by default</h3>
+            <p>Grid density and container sizing respond to the available display instead of forcing one fixed geometry.</p>
+          </article>
+          <article class="feature reveal" style="transition-delay:.04s">
+            <div class="feature-icon" aria-hidden="true">◈</div>
+            <span class="feature-label">02 / MOTION</span>
+            <h3>Persistent view hierarchy</h3>
+            <p>A stable AppKit host keeps transitions composed, tactile, and ready for high-refresh displays.</p>
+          </article>
+          <article class="feature reveal" style="transition-delay:.08s">
+            <div class="feature-icon" aria-hidden="true">♫</div>
+            <span class="feature-label">03 / MEDIA</span>
+            <h3>Native media controls</h3>
+            <p>Music playback and metadata live inside the launcher, keeping the most common controls close.</p>
+          </article>
+          <article class="feature reveal" style="transition-delay:.04s">
+            <div class="feature-icon" aria-hidden="true">⊘</div>
+            <span class="feature-label">04 / CLEANUP</span>
+            <h3>Better uninstall routing</h3>
+            <p>Route removals through AppCleaner when available, with a straightforward fallback to Trash.</p>
+          </article>
+          <article class="feature reveal" style="transition-delay:.08s">
+            <div class="feature-icon" aria-hidden="true">⊛</div>
+            <span class="feature-label">05 / PRIVACY</span>
+            <h3>PIN-protected Vault</h3>
+            <p>Keep sensitive shortcuts and developer tools in a Vault category, hidden behind a PIN at rest.</p>
+          </article>
+          <article class="feature reveal" style="transition-delay:.12s">
+            <div class="feature-icon" aria-hidden="true">⊟</div>
+            <span class="feature-label">06 / DISPLAYS</span>
+            <h3>Display-aware placement</h3>
+            <p>Connected-screen awareness keeps MiniPad where the work is, whether laptop or external.</p>
+          </article>
+          <article class="feature reveal">
+            <div class="feature-icon" aria-hidden="true">⌕</div>
+            <span class="feature-label">07 / SEARCH</span>
+            <h3>Fast by muscle memory</h3>
+            <p>Type a few characters to narrow the surface instantly, with predictable categories as your library grows.</p>
+          </article>
+          <article class="feature reveal" style="transition-delay:.04s">
+            <div class="feature-icon" aria-hidden="true">◌</div>
+            <span class="feature-label">08 / FOCUS</span>
+            <h3>Quiet auto-hide</h3>
+            <p>When not in use, the launcher retreats to the edge instead of covering the workspace you're protecting.</p>
+          </article>
+          <article class="feature reveal" style="transition-delay:.08s">
+            <div class="feature-icon" aria-hidden="true">⌨</div>
+            <span class="feature-label">09 / ACCESS</span>
+            <h3>Keyboard-ready</h3>
+            <p>Every control is reachable with a keyboard. The handle stays discoverable for pointer and trackpad users.</p>
+          </article>
+        </div>
       </div>
     </section>
 
-    <section class="demo-section" id="demo">
-      <div class="wrap"><div class="demo-shell"><div class="demo-toolbar"><div><div class="eyebrow">Interactive preview · 03</div><h3>See the launch surface in motion</h3><p>Search, filter, pin, and control playback in a working browser simulation.</p></div><div class="segmented"><button class="active" data-edge="left">Left edge</button><button data-edge="right">Right edge</button></div></div>
-        <div class="sim-stage"><div class="window-bar"><span class="traffic"><i></i><i></i><i></i></span><span class="window-title">Desktop / External Display</span></div><div class="sim-wallpaper"></div><div class="sim-menu"><span class="sim-menu-left"><b></b><span>Finder</span><span>File</span><span>View</span></span><span class="sim-menu-right"><span>⌁</span><span>Wi-Fi</span><span id="clock" aria-label="Current time">--:--</span></span></div><button class="sim-handle" id="simHandle" data-style="Minimal tab" aria-label="Open MiniPad launcher"><span class="handle-tab"></span><span class="handle-hint">Hover to open MiniPad</span></button><div class="sim-drawer closed" id="drawer"><div class="sim-top"><label class="sim-search">⌕<input id="searchInput" placeholder="Search applications" aria-label="Search applications"></label><button class="sim-close" id="drawerClose" aria-label="Close MiniPad">×</button></div><div class="tabs" id="tabs"><button class="tab active" data-category="All">All</button><button class="tab" data-category="Developer">Developer</button><button class="tab" data-category="Productivity">Productivity</button><button class="tab" data-category="Apple">Apple</button><button class="tab" data-category="Utilities">Utilities</button><button class="tab" data-category="Vault">Vault · locked</button></div><div class="sim-app-grid" id="simApps"></div><div class="sim-footer"><span class="sim-album" id="album">♫</span><span class="sim-track"><strong id="track">Midnight City</strong><small id="artist">M83 · Spotify</small></span><button class="sim-control" id="prev" aria-label="Previous track">‹</button><button class="sim-control" id="play" aria-label="Play or pause">Ⅱ</button><button class="sim-control" id="next" aria-label="Next track">›</button></div></div></div>
-        <div class="demo-controls"><label class="control">Handle style<select id="handleSelect"><option>Minimal tab</option><option>Glass pill</option><option>Mini glow</option><option>Notch</option></select></label><label class="control">Appearance<select id="appearanceSelect"><option>Liquid glass</option><option>Frosted dark</option><option>Light surface</option></select></label><label class="control">Grid density<select id="densitySelect"><option value="5">5 columns</option><option value="4">4 columns</option><option value="6">6 columns</option></select></label><label class="control">Motion<select id="motionSelect"><option>Balanced</option><option>Snappy</option><option>Elegant</option></select></label></div>
-      </div></div>
+    <!-- ── Demo ───────────────────────────────────────────── -->
+    <section class="demo" id="demo">
+      <div class="wrap">
+        <div class="demo-shell reveal">
+          <div class="demo-toolbar">
+            <div>
+              <span class="eyebrow">Interactive preview · 03</span>
+              <h3>Try the launch surface</h3>
+              <p>Search, filter, switch categories, and control playback in a live simulation.</p>
+            </div>
+            <div class="segmented" role="group" aria-label="Edge position">
+              <button class="active" data-edge="left">Left edge</button>
+              <button data-edge="right">Right edge</button>
+            </div>
+          </div>
+
+          <div class="sim-stage">
+            <div class="window-bar">
+              <span class="traffic"><i></i><i></i><i></i></span>
+              <span class="window-title">Desktop / External Display</span>
+            </div>
+            <div class="sim-wallpaper"></div>
+            <div class="sim-menu" aria-hidden="true">
+              <span class="sim-menu-left"><b>●</b><span>Finder</span><span>File</span><span>View</span></span>
+              <span class="sim-menu-right"><span>⌁</span><span>Wi-Fi</span><span id="clock">--:--</span></span>
+            </div>
+            <button class="sim-handle" id="simHandle" data-style="default" aria-label="Open MiniPad launcher" aria-expanded="false">
+              <span class="handle-tab"></span>
+              <span class="handle-hint" aria-hidden="true">Hover to open MiniPad</span>
+            </button>
+            <div class="sim-drawer closed" id="drawer" role="dialog" aria-label="MiniPad launcher">
+              <div class="sim-top">
+                <label class="sim-search">⌕
+                  <input id="searchInput" placeholder="Search applications" aria-label="Search applications">
+                </label>
+                <button class="sim-close" id="drawerClose" aria-label="Close MiniPad">×</button>
+              </div>
+              <div class="tabs" id="tabs" role="tablist">
+                <button class="tab active" data-category="All" role="tab" aria-selected="true">All</button>
+                <button class="tab" data-category="Developer" role="tab" aria-selected="false">Developer</button>
+                <button class="tab" data-category="Productivity" role="tab" aria-selected="false">Productivity</button>
+                <button class="tab" data-category="Apple" role="tab" aria-selected="false">Apple</button>
+                <button class="tab" data-category="Utilities" role="tab" aria-selected="false">Utilities</button>
+                <button class="tab" data-category="Vault" role="tab" aria-selected="false">Vault · locked</button>
+              </div>
+              <div class="sim-app-grid" id="simApps" role="list"></div>
+              <div class="sim-footer">
+                <span class="sim-album" id="album" aria-hidden="true">♫</span>
+                <span class="sim-track" aria-live="polite">
+                  <strong id="track">Midnight City</strong>
+                  <small id="artist">M83 · Spotify</small>
+                </span>
+                <button class="sim-control" id="prev" aria-label="Previous track">‹</button>
+                <button class="sim-control" id="play" aria-label="Pause">Ⅱ</button>
+                <button class="sim-control" id="next" aria-label="Next track">›</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="demo-controls">
+            <label class="control">Handle style
+              <select id="handleSelect">
+                <option>Minimal tab</option>
+                <option>Glass pill</option>
+                <option>Mini glow</option>
+              </select>
+            </label>
+            <label class="control">Appearance
+              <select id="appearanceSelect">
+                <option>Liquid glass</option>
+                <option>Frosted dark</option>
+                <option>Light surface</option>
+              </select>
+            </label>
+            <label class="control">Grid density
+              <select id="densitySelect">
+                <option value="5">5 columns</option>
+                <option value="4">4 columns</option>
+                <option value="6">6 columns</option>
+              </select>
+            </label>
+            <label class="control">Motion
+              <select id="motionSelect">
+                <option>Balanced</option>
+                <option>Snappy</option>
+                <option>Elegant</option>
+              </select>
+            </label>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <section id="comparison"><div class="wrap comparison"><div><div class="eyebrow">Positioning · 04</div><h2>Focused where general-purpose launchers are noisy.</h2><p class="section-intro" style="margin-top:18px">MiniPad is not trying to replace every automation tool. It is a focused, native layer for the everyday launch-and-control loop.</p><p class="note">Illustrative product positioning for the showcase prototype.</p></div><div class="table-wrap"><table class="table"><thead><tr><th>Capability</th><th>MiniPad</th><th>Launchpad</th><th>Dock</th><th>Electron tools</th></tr></thead><tbody><tr><td>Screen-edge pinning</td><td class="yes">Yes</td><td class="no">No</td><td>Fixed</td><td class="no">Rare</td></tr><tr><td>Smart categories</td><td class="yes">Native</td><td>Manual</td><td class="no">No</td><td>Varies</td></tr><tr><td>Inline media control</td><td class="yes">Yes</td><td class="no">No</td><td class="no">No</td><td>Varies</td></tr><tr><td>Multi-display awareness</td><td class="yes">Built in</td><td>Limited</td><td>System-managed</td><td>Varies</td></tr><tr><td>Deep uninstall routing</td><td class="yes">AppCleaner</td><td class="no">Trash only</td><td class="no">Trash only</td><td>Varies</td></tr></tbody></table></div></div></section>
+    <!-- ── Comparison ─────────────────────────────────────── -->
+    <section class="comparison-section" id="comparison">
+      <div class="wrap comparison-grid reveal">
+        <div>
+          <span class="eyebrow">Positioning · 04</span>
+          <h2>Focused where general launchers are noisy.</h2>
+          <p class="section-intro" style="margin-top:18px">MiniPad is not trying to replace every automation tool. It is a focused, native layer for the everyday launch-and-control loop.</p>
+          <p class="note">Illustrative positioning for the showcase prototype.</p>
+        </div>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Capability</th>
+                <th>MiniPad</th>
+                <th>Launchpad</th>
+                <th>Dock</th>
+                <th>Electron tools</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Screen-edge pinning</td><td class="yes">✓ Yes</td><td class="no">No</td><td>Fixed</td><td class="no">Rare</td></tr>
+              <tr><td>Smart categories</td><td class="yes">✓ Native</td><td>Manual</td><td class="no">No</td><td>Varies</td></tr>
+              <tr><td>Inline media control</td><td class="yes">✓ Yes</td><td class="no">No</td><td class="no">No</td><td>Varies</td></tr>
+              <tr><td>Multi-display awareness</td><td class="yes">✓ Built in</td><td>Limited</td><td>System</td><td>Varies</td></tr>
+              <tr><td>Deep uninstall routing</td><td class="yes">✓ AppCleaner</td><td class="no">Trash only</td><td class="no">Trash only</td><td>Varies</td></tr>
+              <tr><td>100% native runtime</td><td class="yes">✓ Swift</td><td class="yes">✓ Swift</td><td class="yes">✓ ObjC</td><td class="no">No</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
 
-    <section id="start"><div class="wrap quickstart"><div><div class="eyebrow">Get started · 06</div><h2>Keep the first run simple.</h2><p class="section-intro" style="margin-top:18px">Clone the project, build the release target, and launch the native surface. The showcase is intentionally dependency-free; the product can stay that way too.</p><div class="hero-meta" style="margin-top:22px"><span><i></i>macOS 13.0+</span><span>Xcode Command Line Tools</span></div></div><div class="terminal"><div class="terminal-top"><span>Terminal — zsh</span><button class="terminal-copy" id="copyCommand">Copy command</button></div><pre><span class="prompt">$</span> <span class="command" id="command">git clone https://github.com/egulsen10k-lgtm/MiniPad.git &amp;&amp; cd MiniPad &amp;&amp; swift build -c release</span></pre></div></div></section>
+    <!-- ── Get started ────────────────────────────────────── -->
+    <section class="start-section" id="start">
+      <div class="wrap start-grid reveal">
+        <div>
+          <span class="eyebrow">Get started · 05</span>
+          <h2>Keep the first run simple.</h2>
+          <p class="section-intro" style="margin-top:16px">Download the DMG, drag to Applications, launch. Or build from source — the project is dependency-free by design.</p>
+          <div class="hero-meta" style="margin-top:20px">
+            <span><i></i>macOS 13.0+</span>
+            <span>Apple Silicon or Intel</span>
+          </div>
+          <div class="hero-actions" style="margin-top:24px">
+            <a class="btn btn-solid" href="https://github.com/egulsen10k-lgtm/MiniPad/releases/latest/download/MiniPad-Installer.dmg">⬇ Download .dmg</a>
+            <a class="btn btn-ghost" href="https://github.com/egulsen10k-lgtm/MiniPad" target="_blank" rel="noopener">GitHub →</a>
+          </div>
+        </div>
+        <div class="terminal">
+          <div class="terminal-top">
+            <span>Terminal — zsh</span>
+            <button class="terminal-copy" id="copyCommand">Copy command</button>
+          </div>
+          <pre><span class="prompt">$</span> <span class="command" id="command">git clone https://github.com/egulsen10k-lgtm/MiniPad.git &amp;&amp; cd MiniPad &amp;&amp; swift build -c release</span></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Closing CTA ────────────────────────────────────── -->
+    <div class="closing reveal">
+      <div class="wrap">
+        <span class="eyebrow">Ready when you are</span>
+        <h2 class="serif" style="margin-top:14px">Your apps, always<em style="font-style:italic;color:var(--accent)"> one gesture away.</em></h2>
+        <p>Native. Minimal. Exactly as fast as macOS allows.</p>
+        <div class="hero-actions">
+          <a class="btn btn-solid" href="https://github.com/egulsen10k-lgtm/MiniPad/releases/latest/download/MiniPad-Installer.dmg">⬇ Download MiniPad — Free</a>
+          <a class="btn btn-ghost" href="https://github.com/egulsen10k-lgtm/MiniPad" target="_blank" rel="noopener">View source</a>
+        </div>
+      </div>
+    </div>
+
   </main>
-  <footer class="footer"><div class="wrap footer-inner"><span>© 2026 MiniPad · Built for macOS</span><span><a href="https://github.com/egulsen10k-lgtm/MiniPad">GitHub</a> · <a href="#top">Back to top ↑</a></span></div></footer>
+
+  <!-- ── Footer ──────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <span>© 2026 MiniPad · Native macOS utility · Built with Swift</span>
+      <div class="footer-links">
+        <a href="https://github.com/egulsen10k-lgtm/MiniPad">GitHub</a>
+        <a href="https://github.com/egulsen10k-lgtm/MiniPad/releases">Releases</a>
+        <a href="https://github.com/egulsen10k-lgtm/MiniPad/issues">Issues</a>
+        <a href="#top">↑ Top</a>
+      </div>
+    </div>
+  </footer>
 
   <script>
-    const isMobile = /Mobi|Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent) || window.innerWidth < 768;
+    // ── App data ────────────────────────────────────────────
     const apps = [
       ['Xcode','Developer'],['VS Code','Developer'],['Terminal','Developer'],['Docker','Developer'],['GitHub','Developer'],['Postman','Developer'],
       ['Notion','Productivity'],['Figma','Productivity'],['Linear','Productivity'],['Slack','Productivity'],['Obsidian','Productivity'],
       ['Safari','Apple'],['Music','Apple'],['Finder','Apple'],['Notes','Apple'],['Settings','Apple'],
-      ['AppCleaner','Utilities'],['Raycast','Utilities'],['Monitor','Utilities'],['Shortcuts','Utilities'],['SSH Keys','Vault'],['GPG Keychain','Vault']
+      ['AppCleaner','Utilities'],['Raycast','Utilities'],['Monitor','Utilities'],['Shortcuts','Utilities'],
+      ['SSH Keys','Vault'],['GPG Keychain','Vault']
     ];
-    const songs = [['Midnight City','M83 · Spotify','♫'],['Starboy','The Weeknd · Apple Music','✦'],['Get Lucky','Daft Punk · Spotify','◌']];
-    let category = 'All', query = '', song = 0, playing = true, drawerHovering = false, autoHideTimer;
-    const $ = (selector) => document.querySelector(selector);
-    const drawer = $('#drawer'), grid = $('#simApps'), search = $('#searchInput');
+    const songs = [
+      ['Midnight City','M83 · Spotify','♫'],
+      ['Starboy','The Weeknd · Apple Music','✦'],
+      ['Get Lucky','Daft Punk · Spotify','◌']
+    ];
+    let category = 'All', query = '', songIdx = 0, playing = true, drawerHovering = false, autoHideTimer;
+
+    const $ = s => document.querySelector(s);
+    const drawer = $('#drawer'), grid = $('#simApps'), search = $('#searchInput'), handle = $('#simHandle');
+
+    // ── Render app grid ─────────────────────────────────────
     function renderApps() {
-      const filtered = apps.filter(([name, cat]) => (category === 'All' || cat === category) && name.toLowerCase().includes(query));
-      grid.innerHTML = filtered.length ? filtered.map(([name, cat]) => `<button class="sim-app" data-name="${name}" aria-label="Launch ${name}"><span class="sim-app-icon">${name.slice(0,2).toUpperCase()}</span><span class="sim-app-name">${name}</span></button>`).join('') : '<div class="sim-empty">No applications match this search.</div>';
-      grid.querySelectorAll('.sim-app').forEach(button => button.addEventListener('click', () => alert(`Launching ${button.dataset.name} (simulation)`)));
+      const filtered = apps.filter(([name, cat]) =>
+        (category === 'All' || cat === category) &&
+        name.toLowerCase().includes(query)
+      );
+      grid.innerHTML = filtered.length
+        ? filtered.map(([name]) =>
+            `<button class="sim-app" data-name="${name}" role="listitem" aria-label="Launch ${name}">
+              <span class="sim-app-icon">${name.slice(0,2).toUpperCase()}</span>
+              <span class="sim-app-name">${name}</span>
+            </button>`
+          ).join('')
+        : '<div class="sim-empty" role="status">No applications match this search.</div>';
+      grid.querySelectorAll('.sim-app').forEach(b =>
+        b.addEventListener('click', () => alert(`Launching ${b.dataset.name} (simulation)`))
+      );
     }
+
+    // ── Auto-hide ───────────────────────────────────────────
     function scheduleAutoHide() {
       clearTimeout(autoHideTimer);
       autoHideTimer = setTimeout(() => {
-        if (!drawerHovering && document.activeElement?.closest('#drawer') === null) drawer.classList.add('closed');
+        if (!drawerHovering && !drawer.contains(document.activeElement)) closeLauncher();
       }, 4200);
     }
     function openLauncher() {
       drawer.classList.remove('closed');
-      if (!query && category !== 'All') {
-        category = 'All';
-        document.querySelectorAll('.tab').forEach(tab => tab.classList.toggle('active', tab.dataset.category === 'All'));
-      }
+      handle.setAttribute('aria-expanded', 'true');
       renderApps();
       scheduleAutoHide();
     }
-    function toggleLauncher() {
-      if (drawer.classList.contains('closed')) openLauncher();
-      else { clearTimeout(autoHideTimer); drawer.classList.add('closed'); }
+    function closeLauncher() {
+      clearTimeout(autoHideTimer);
+      drawer.classList.add('closed');
+      handle.setAttribute('aria-expanded', 'false');
     }
+    function toggleLauncher() {
+      drawer.classList.contains('closed') ? openLauncher() : closeLauncher();
+    }
+
+    // ── Category tabs ────────────────────────────────────────
     function setCategory(next) {
       if (next === 'Vault') {
-        const pin = prompt('Enter Vault PIN (demo PIN: 0000)');
+        const pin = prompt('Enter Vault PIN (demo: 0000)');
         if (pin !== '0000') { alert('Vault remains locked.'); return; }
       }
       category = next;
-      document.querySelectorAll('.tab').forEach(tab => tab.classList.toggle('active', tab.dataset.category === category));
+      document.querySelectorAll('.tab').forEach(tab => {
+        const active = tab.dataset.category === category;
+        tab.classList.toggle('active', active);
+        tab.setAttribute('aria-selected', String(active));
+      });
       renderApps();
     }
     document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => setCategory(tab.dataset.category)));
-    search.addEventListener('input', () => { query = search.value.toLowerCase().trim(); renderApps(); });
-    const handle = $('#simHandle');
-    const hint = handle.querySelector('.handle-hint');
 
-    // Universal interactions
+    // ── Search ───────────────────────────────────────────────
+    search.addEventListener('input', () => { query = search.value.toLowerCase().trim(); renderApps(); });
+
+    // ── Handle interactions ──────────────────────────────────
     handle.addEventListener('pointerenter', () => { clearTimeout(autoHideTimer); openLauncher(); });
     handle.addEventListener('pointerleave', scheduleAutoHide);
+    handle.addEventListener('click', e => { e.stopPropagation(); toggleLauncher(); });
+    handle.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleLauncher(); } });
+
     drawer.addEventListener('pointerenter', () => { drawerHovering = true; clearTimeout(autoHideTimer); });
     drawer.addEventListener('pointerleave', () => { drawerHovering = false; scheduleAutoHide(); });
+    drawer.addEventListener('touchstart', e => e.stopPropagation(), { passive: true });
+    drawer.addEventListener('touchmove', e => e.stopPropagation(), { passive: true });
 
-    handle.addEventListener('click', (e) => {
-      e.stopPropagation();
-      toggleLauncher();
-    });
+    $('#drawerClose').addEventListener('click', closeLauncher);
 
-    // Prevent touch events on drawer from bubbling (fixes accidental close while scrolling inside)
-    if (isMobile) {
-      drawer.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
-      drawer.addEventListener('touchmove', (e) => e.stopPropagation(), { passive: true });
-    }
+    const simStage = document.querySelector('.sim-stage');
+    simStage.addEventListener('dblclick', openLauncher);
+    simStage.addEventListener('pointerleave', () => { drawerHovering = false; closeLauncher(); });
 
-    document.querySelectorAll('[data-edge]').forEach(button => button.addEventListener('click', () => {
-      document.querySelectorAll('[data-edge]').forEach(b => b.classList.remove('active')); button.classList.add('active');
-      const isRight = button.dataset.edge === 'right';
+    // Keyboard: close on Escape
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && !drawer.classList.contains('closed')) closeLauncher(); });
+
+    // ── Edge toggle ──────────────────────────────────────────
+    document.querySelectorAll('[data-edge]').forEach(btn => btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-edge]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const isRight = btn.dataset.edge === 'right';
       drawer.classList.toggle('right', isRight);
       handle.classList.toggle('right', isRight);
     }));
-    handle.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleLauncher(); } });
-    $('#drawerClose').addEventListener('click', () => { clearTimeout(autoHideTimer); drawer.classList.add('closed'); });
-    const simStage = document.querySelector('.sim-stage');
-    simStage.addEventListener('dblclick', openLauncher);
-    simStage.addEventListener('pointerleave', () => { clearTimeout(autoHideTimer); drawerHovering = false; drawer.classList.add('closed'); });
-    function updateSong() { const [title, artist, cover] = songs[song]; $('#track').textContent = title; $('#artist').textContent = artist; $('#album').textContent = cover; $('#play').textContent = playing ? 'Ⅱ' : '▶'; }
-    $('#prev').addEventListener('click', () => { song = (song - 1 + songs.length) % songs.length; updateSong(); });
-    $('#next').addEventListener('click', () => { song = (song + 1) % songs.length; updateSong(); });
-    $('#play').addEventListener('click', () => { playing = !playing; updateSong(); });
-    $('#densitySelect').addEventListener('change', (event) => { const columns = Number(event.target.value); grid.style.gridTemplateColumns = `repeat(${columns}, 1fr)`; drawer.style.width = columns === 4 ? 'min(470px, calc(100% - 40px))' : columns === 6 ? 'min(590px, calc(100% - 40px))' : 'min(520px, calc(100% - 40px))'; openLauncher(); });
-    $('#motionSelect').addEventListener('change', (event) => { const transition = event.target.value === 'Snappy' ? 'transform .18s cubic-bezier(.1,.9,.2,1), opacity .18s ease' : event.target.value === 'Elegant' ? 'transform .58s cubic-bezier(.25,1,.5,1), opacity .4s ease' : 'transform .38s cubic-bezier(.2,.8,.2,1), opacity .28s ease'; drawer.style.transition = transition; handle.style.transitionDuration = event.target.value === 'Snappy' ? '.18s' : event.target.value === 'Elegant' ? '.58s' : '.38s'; });
-    $('#appearanceSelect').addEventListener('change', (event) => { const lightSurface = event.target.value === 'Light surface'; handle.dataset.appearance = event.target.value; drawer.classList.toggle('light-surface', lightSurface); drawer.style.backdropFilter = event.target.value === 'Liquid glass' ? 'blur(32px) saturate(150%)' : event.target.value === 'Frosted dark' ? 'blur(22px) saturate(110%)' : 'blur(16px) saturate(100%)'; drawer.style.background = lightSurface ? 'rgba(250,244,234,.95)' : event.target.value === 'Frosted dark' ? 'rgba(18,15,12,.94)' : 'rgba(31,26,20,.86)'; drawer.style.borderColor = lightSurface ? 'rgba(96,73,43,.22)' : 'rgba(255,255,255,.22)'; drawer.querySelectorAll('*').forEach(el => { el.style.color = ''; }); });
-    $('#handleSelect').addEventListener('change', (event) => { handle.dataset.style = event.target.value; drawer.style.borderRadius = event.target.value === 'Notch' ? '7px' : event.target.value === 'Glass pill' ? '24px' : '17px'; });
-    $('#copyCommand').addEventListener('click', async () => { try { await navigator.clipboard.writeText($('#command').textContent); $('#copyCommand').textContent = 'Copied'; setTimeout(() => $('#copyCommand').textContent = 'Copy command', 1600); } catch { $('#copyCommand').textContent = 'Select manually'; } });
-    $('#themeToggle').addEventListener('click', () => { const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'; document.documentElement.dataset.theme = next; localStorage.setItem('minipad-theme', next); });
-    const storedTheme = localStorage.getItem('minipad-theme'); if (storedTheme) document.documentElement.dataset.theme = storedTheme;
-    function updateClock() {
-      const clock = $('#clock');
-      if (!clock) return;
-      try { clock.textContent = new Intl.DateTimeFormat(undefined, {hour: 'numeric', minute: '2-digit'}).format(new Date()); }
-      catch { clock.textContent = new Date().toLocaleTimeString([], {hour: 'numeric', minute: '2-digit'}); }
+
+    // ── Music controls ───────────────────────────────────────
+    function updateSong() {
+      const [title, artist, cover] = songs[songIdx];
+      $('#track').textContent = title;
+      $('#artist').textContent = artist;
+      $('#album').textContent = cover;
+      $('#play').textContent = playing ? 'Ⅱ' : '▶';
+      $('#play').setAttribute('aria-label', playing ? 'Pause' : 'Play');
     }
-    window.addEventListener('DOMContentLoaded', renderApps, { once: true });
-    renderApps(); updateSong(); updateClock(); setInterval(updateClock, 30000);
+    $('#prev').addEventListener('click', () => { songIdx = (songIdx - 1 + songs.length) % songs.length; updateSong(); });
+    $('#next').addEventListener('click', () => { songIdx = (songIdx + 1) % songs.length; updateSong(); });
+    $('#play').addEventListener('click', () => { playing = !playing; updateSong(); });
+
+    // ── Demo controls ────────────────────────────────────────
+    $('#densitySelect').addEventListener('change', e => {
+      const cols = Number(e.target.value);
+      grid.style.gridTemplateColumns = `repeat(${cols},1fr)`;
+      drawer.style.width = cols === 4 ? 'min(470px,calc(100% - 36px))' : cols === 6 ? 'min(590px,calc(100% - 36px))' : 'min(520px,calc(100% - 36px))';
+      openLauncher();
+    });
+    $('#motionSelect').addEventListener('change', e => {
+      const t = e.target.value === 'Snappy'  ? 'transform .16s cubic-bezier(.1,.9,.2,1), opacity .16s ease'
+               : e.target.value === 'Elegant' ? 'transform .6s cubic-bezier(.25,1,.5,1), opacity .4s ease'
+               : 'transform .38s cubic-bezier(.2,.8,.2,1), opacity .28s ease';
+      drawer.style.transition = t;
+    });
+    $('#appearanceSelect').addEventListener('change', e => {
+      const v = e.target.value, light = v === 'Light surface';
+      drawer.classList.toggle('light-surface', light);
+      drawer.style.backdropFilter = v === 'Liquid glass' ? 'blur(32px) saturate(150%)' : v === 'Frosted dark' ? 'blur(22px) saturate(110%)' : 'blur(16px) saturate(100%)';
+      drawer.style.background = light ? 'rgba(248,242,232,.96)' : v === 'Frosted dark' ? 'rgba(14,12,10,.94)' : 'rgba(16,20,28,.86)';
+      drawer.style.borderColor = light ? 'rgba(80,62,40,.2)' : 'rgba(255,255,255,.2)';
+    });
+    $('#handleSelect').addEventListener('change', e => {
+      const v = e.target.value;
+      handle.dataset.style = v;
+      drawer.style.borderRadius = v === 'Glass pill' ? '22px' : '16px';
+    });
+
+    // ── Copy command ─────────────────────────────────────────
+    $('#copyCommand').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText($('#command').textContent);
+        $('#copyCommand').textContent = 'Copied ✓';
+        setTimeout(() => $('#copyCommand').textContent = 'Copy command', 1600);
+      } catch {
+        $('#copyCommand').textContent = 'Select manually';
+      }
+    });
+
+    // ── Theme toggle ─────────────────────────────────────────
+    $('#themeToggle').addEventListener('click', () => {
+      const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+      document.documentElement.dataset.theme = next;
+      localStorage.setItem('minipad-theme', next);
+    });
+    const storedTheme = localStorage.getItem('minipad-theme');
+    if (storedTheme) document.documentElement.dataset.theme = storedTheme;
+
+    // ── Clock ────────────────────────────────────────────────
+    function updateClock() {
+      const el = $('#clock');
+      if (!el) return;
+      try { el.textContent = new Intl.DateTimeFormat(undefined, {hour:'numeric',minute:'2-digit'}).format(new Date()); }
+      catch { el.textContent = new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}); }
+    }
+
+    // ── Scroll reveal ────────────────────────────────────────
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // ── Init ─────────────────────────────────────────────────
+    renderApps(); updateSong(); updateClock();
+    setInterval(updateClock, 30000);
   </script>
 </body>
 </html>

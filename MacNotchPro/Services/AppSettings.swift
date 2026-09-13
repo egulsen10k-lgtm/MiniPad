@@ -188,6 +188,11 @@ class AppSettings: ObservableObject {
         didSet { objectWillChange.send() }
     }
     
+    // Toggle for welcoming animation / greeting banner when opening MiniPad
+    @AppStorage("showWelcomeMessage") var showWelcomeMessage: Bool = true {
+        didSet { objectWillChange.send() }
+    }
+    
     var itemsPerPage: Int {
         max(4, gridColumns * gridRows)
     }
