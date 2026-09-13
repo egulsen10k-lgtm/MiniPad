@@ -148,7 +148,53 @@
     .sim-stage { position: relative; min-height: 520px; border: 1px solid var(--line); border-radius: var(--radius-md); overflow: hidden; background: #171411; }.sim-stage .window-bar { position: relative; z-index: 3; background: rgba(24,20,16,.78); }.sim-wallpaper { position: absolute; inset: 42px 0 0; background: radial-gradient(ellipse at 75% 20%, rgba(174,119,53,.28), transparent 34%), radial-gradient(ellipse at 22% 76%, rgba(112,72,108,.24), transparent 35%), linear-gradient(145deg, #292117, #131110 65%); }.sim-wallpaper::after { content: ""; position: absolute; inset: 0; opacity: .25; background-image: linear-gradient(115deg, transparent 0 45%, rgba(255,255,255,.05) 45.2% 45.4%, transparent 45.6%); background-size: 180px 180px; }
     .sim-menu { position: absolute; z-index: 2; top: 42px; left: 0; right: 0; height: 27px; display: flex; justify-content: space-between; align-items: center; padding: 0 12px; color: rgba(255,255,255,.75); background: rgba(10,12,16,.45); border-bottom: 1px solid rgba(255,255,255,.08); font-size: .62rem; }.sim-menu-left, .sim-menu-right { display: flex; gap: 13px; }
     .sim-handle { position: absolute; z-index: 6; top: 50%; left: 0; display: flex; align-items: center; transform: translateY(-50%); cursor: pointer; }.sim-handle.right { left: auto; right: 0; flex-direction: row-reverse; }.handle-tab { width: 12px; height: 86px; border: 1px solid rgba(255,239,210,.32); border-left: 0; border-radius: 0 8px 8px 0; background: rgba(255,247,232,.14); box-shadow: 0 5px 16px rgba(0,0,0,.22); transition: width .2s, height .2s, background .2s, border-radius .2s; }.sim-handle.right .handle-tab { border-left: 1px solid rgba(255,239,210,.32); border-right: 0; border-radius: 8px 0 0 8px; }.sim-handle[data-style="Glass pill"] .handle-tab { width: 17px; height: 112px; border: 1px solid rgba(255,244,220,.34); border-radius: 0 12px 12px 0; background: rgba(255,247,232,.2); backdrop-filter: blur(14px); }.sim-handle.right[data-style="Glass pill"] .handle-tab { border-radius: 12px 0 0 12px; }.sim-handle[data-style="Notch"] .handle-tab { width: 22px; height: 72px; border-radius: 0 10px 10px 0; background: rgba(11,10,9,.8); }.sim-handle.right[data-style="Notch"] .handle-tab { border-radius: 10px 0 0 10px; }.handle-hint { position: absolute; left: 23px; width: 132px; padding: 7px 9px; border: 1px solid rgba(255,239,210,.18); border-radius: 7px; background: rgba(24,20,16,.92); color: rgba(255,247,232,.82); font-size: .65rem; line-height: 1.25; opacity: 0; transform: translateX(-7px); pointer-events: none; transition: opacity .18s, transform .18s; white-space: nowrap; }.sim-handle.right .handle-hint { left: auto; right: 23px; transform: translateX(7px); }.sim-handle:hover .handle-hint, .sim-handle:focus-visible .handle-hint { opacity: 1; transform: translateX(0); }
-    .sim-drawer { position: absolute; z-index: 4; top: 88px; bottom: 22px; left: 20px; width: min(520px, calc(100% - 40px)); display: flex; flex-direction: column; padding: 15px; border: 1px solid rgba(255,255,255,.22); border-radius: 17px; background: rgba(19,23,31,.84); box-shadow: 0 24px 60px rgba(0,0,0,.44), inset 0 1px rgba(255,255,255,.15); backdrop-filter: blur(32px) saturate(130%); transform: translateX(0); transition: transform .38s cubic-bezier(.2,.8,.2,1), opacity .28s; }.sim-drawer.right { left: auto; right: 20px; }.sim-drawer.closed { transform: translateX(calc(-100% - 35px)); opacity: 0; pointer-events: none; }.sim-drawer.right.closed { transform: translateX(calc(100% + 35px)); }
+    .sim-drawer { position: absolute; z-index: 4; top: 88px; bottom: 22px; left: 20px; width: min(520px, calc(100% - 40px)); display: flex; flex-direction: column; padding: 15px; border: 1px solid rgba(255,255,255,.22); border-radius: 17px; background: rgba(19,23,31,.84); box-shadow: 0 24px 60px rgba(0,0,0,.44), inset 0 1px rgba(255,255,255,.15); backdrop-filter: blur(32px) saturate(130%); transform: translateX(0); transition: transform .38s cubic-bezier(.2,.8,.2,1), opacity .28s; overflow-y: auto; -webkit-overflow-scrolling: touch; }.sim-drawer.right { left: auto; right: 20px; }.sim-drawer.closed { transform: translateX(calc(-100% - 35px)); opacity: 0; pointer-events: none; }.sim-drawer.right.closed { transform: translateX(calc(100% + 35px)); }
+
+    /* Mobile-specific styles */
+    @media (max-width: 768px) {
+      .sim-drawer { 
+        left: 0 !important; right: 0 !important; 
+        width: 100% !important; 
+        border-radius: 0 !important; 
+        bottom: 0 !important; 
+        border-left: none; border-right: none; 
+        height: 60vh;
+        max-height: 60vh;
+      }
+      .sim-drawer.closed { 
+        transform: translateY(100%) !important; 
+        opacity: 0; pointer-events: none;
+      }
+      .sim-drawer.right.closed { 
+        transform: translateY(100%) !important; 
+      }
+      .sim-handle { 
+        width: 60px !important; height: 60px !important; 
+        left: 50% !important; right: auto !important; 
+        transform: translateX(-50%) translateY(-50%) !important; 
+        top: calc(100% - 60px) !important; 
+        z-index: 10;
+        background: rgba(19,23,31,.9);
+        border-radius: 16px 16px 0 0;
+        border: 1px solid rgba(255,255,255,.1);
+        border-bottom: none;
+      }
+      .sim-handle.right { left: 50% !important; right: auto !important; }
+      .handle-tab { display: none !important; }
+      .handle-hint { 
+        display: none !important; 
+      }
+      .sim-handle::before { 
+        content: "⋮"; 
+        font-size: 24px; 
+        color: rgba(255,255,255,.7); 
+        display: block; 
+        text-align: center; 
+        line-height: 60px;
+      }
+      .sim-menu { display: none !important; }
+      .sim-stage { min-height: 50vh !important; }
+    }
     .sim-top { display: flex; gap: 8px; align-items: center; }.sim-search { flex: 1; display: flex; gap: 8px; align-items: center; padding: 9px 11px; border: 1px solid rgba(255,255,255,.14); border-radius: 9px; background: rgba(255,255,255,.06); }.sim-search input { width: 100%; border: 0; outline: 0; background: transparent; color: #fff; font-size: .8rem; }.sim-search input::placeholder { color: rgba(255,255,255,.45); }.sim-close { border: 0; background: transparent; color: rgba(255,255,255,.55); cursor: pointer; font-size: 1rem; }
     .tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; padding: 12px 0 10px; }.tab { width: 100%; min-width: 0; height: 27px; padding: 0 5px; overflow: hidden; border: 1px solid rgba(255,255,255,.1); border-radius: 7px; background: transparent; color: rgba(255,255,255,.56); font-size: .63rem; line-height: 25px; text-align: center; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }.tab.active { border-color: rgba(255,255,255,.28); background: rgba(255,255,255,.13); color: #fff; }
     .sim-app-grid { flex: 1; min-height: 250px; display: grid; grid-template-columns: repeat(5, 1fr); align-content: start; gap: 4px; overflow: auto; padding: 3px 0; }.sim-app { appearance: none; width: 100%; padding: 10px 3px 8px; border: 1px solid transparent; border-radius: 10px; text-align: center; cursor: pointer; background: transparent; color: rgba(255,255,255,.78); }.sim-app:hover { border-color: rgba(255,255,255,.15); background: rgba(255,255,255,.07); }.sim-app-icon { width: 42px; height: 42px; margin: auto; display: grid; place-items: center; border-radius: 11px; background: #b87935; color: #fff; font-size: .7rem; font-weight: 760; }.sim-app:nth-child(2n) .sim-app-icon { background: #8062a7; }.sim-app:nth-child(3n) .sim-app-icon { background: #b8664c; }.sim-app:nth-child(4n) .sim-app-icon { background: #4e9276; }.sim-app-name { display: block; margin-top: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: rgba(255,255,255,.78); font-size: .67rem; }.sim-empty { grid-column: 1/-1; padding: 35px 0; color: rgba(255,255,255,.5); text-align: center; font-size: .8rem; }
@@ -309,28 +355,39 @@
       drawer.addEventListener('pointerleave', () => { drawerHovering = false; scheduleAutoHide(); });
     }
 
-    // Mobile: tap handle to toggle
+    // Universal: click handle to toggle (works on both)
     handle.addEventListener('click', (e) => {
       e.stopPropagation();
       toggleLauncher();
     });
 
-    // Mobile: tap outside to close
+    // Mobile: tap outside to close (using composedPath for proper detection)
     document.addEventListener('click', (e) => {
-      if (isMobile && !drawer.classList.contains('closed') && !drawer.contains(e.target) && e.target !== handle && !handle.contains(e.target)) {
-        clearTimeout(autoHideTimer);
-        drawer.classList.add('closed');
+      if (isMobile && !drawer.classList.contains('closed')) {
+        const path = e.composedPath ? e.composedPath() : [];
+        const clickedInsideDrawer = path.includes(drawer) || drawer.contains(e.target);
+        const clickedHandle = path.includes(handle) || handle.contains(e.target);
+        if (!clickedInsideDrawer && !clickedHandle) {
+          clearTimeout(autoHideTimer);
+          drawer.classList.add('closed');
+        }
       }
     });
 
-    // Mobile: scroll to open
+    // Mobile: scroll down to re-open when closed
     let lastScrollY = window.scrollY;
     window.addEventListener('scroll', () => {
-      if (isMobile && drawer.classList.contains('closed') && window.scrollY > lastScrollY + 100) {
+      if (isMobile && drawer.classList.contains('closed') && window.scrollY > lastScrollY + 150) {
         openLauncher();
       }
       lastScrollY = window.scrollY;
     }, { passive: true });
+
+    // Prevent touch events on drawer from bubbling (fixes accidental close while scrolling inside)
+    if (isMobile) {
+      drawer.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
+      drawer.addEventListener('touchmove', (e) => e.stopPropagation(), { passive: true });
+    }
 
     document.querySelectorAll('[data-edge]').forEach(button => button.addEventListener('click', () => {
       document.querySelectorAll('[data-edge]').forEach(b => b.classList.remove('active')); button.classList.add('active');
