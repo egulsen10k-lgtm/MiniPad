@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Rich Deep Space Glass Background -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#141721"/>
+      <stop offset="50%" stop-color="#0a0c10"/>
+      <stop offset="100%" stop-color="#040507"/>
+    </linearGradient>
+    
+    <!-- Ultra-Clean Frosted Tile Gradient -->
+    <linearGradient id="tile" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.08"/>
+    </linearGradient>
+    
+    <!-- Neon Cyan Luminous Glow -->
+    <linearGradient id="neon" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f2fe"/>
+      <stop offset="100%" stop-color="#0c82ff"/>
+    </linearGradient>
+    
+    <linearGradient id="purpleGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d946ef"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+
+    <!-- Drop Shadow Filter -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="20" stdDeviation="28" flood-color="#000000" flood-opacity="0.65"/>
+    </filter>
+  </defs>
+  
+  <!-- Base Squircle with macOS Pro Proportion -->
+  <rect x="32" y="32" width="448" height="448" rx="104" ry="104" fill="url(#bg)" filter="url(#shadow)"/>
+  <!-- Specular Outer Rim -->
+  <rect x="32" y="32" width="448" height="448" rx="104" ry="104" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="4"/>
+  
+  <!-- Symmetric 4x4 Pure Launchpad Grid (16 Minimalist Glass Circles/App Nodes) -->
+  <!-- Row 1 -->
+  <circle cx="128" cy="128" r="32" fill="url(#tile)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+  <circle cx="128" cy="128" r="12" fill="url(#neon)"/>
+
+  <circle cx="208" cy="128" r="32" fill="url(#tile)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+  <rect x="196" y="116" width="24" height="24" rx="6" fill="#ffffff"/>
+
+  <circle cx="288" cy="128" r="32" fill="url(#tile)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+  <polygon points="288,110 306,140 270,140" fill="url(#purpleGlow)"/>
+
+  <circle cx="368" cy="128" r="32" fill="url(#tile)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+  <circle cx="368" cy="128" r="14" fill="#38bdf8"/>
+
+  <!-- Row 2 -->
+  <circle cx="128" cy="208" r="32" fill="url(#tile)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+  <circle cx="128" cy="208" r="14" fill="#ec4899"/>
+
+  <circle cx="208" cy="208" r="32" fill="url(#neon)" stroke="rgba(255,255,255,0.4)" stroke-width="3"/>
+  <circle cx="208" cy="208" r="12" fill="#040507"/>
+
+  <circle cx="288" cy="208" r="32" fill="url(#tile)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+  <rect x="278" y="198" width="20" height="20" rx="4" fill="#facc15"/>
+
+  <circle cx="368" cy="208" r="32" fill="url(#tile)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+  <path d="M356 208 L380 208 M368 196 L368 220" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Row 3 -->
+  <circle cx="128" cy="288" r="32" fill="url(#tile)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+  <polygon points="128,272 144,300 112,300" fill="#34d399"/>
+
+  <circle cx="208" cy="288" r="32" fill="url(#tile)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+  <circle cx="208" cy="288" r="14" fill="#a855f7"/>
+
+  <circle cx="288" cy="288" r="32" fill="url(#tile)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+  <circle cx="288" cy="288" r="14" fill="#f97316"/>
+
+  <circle cx="368" cy="288" r="32" fill="url(#tile)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+  <rect x="356" y="278" width="24" height="20" rx="4" fill="#60a5fa"/>
+
+  <!-- Row 4 -->
+  <circle cx="128" cy="368" r="32" fill="url(#tile)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+  <circle cx="128" cy="368" r="14" fill="#fb7185"/>
+
+  <circle cx="208" cy="368" r="32" fill="url(#tile)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+  <path d="M196 368 L220 368" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+
+  <circle cx="288" cy="368" r="32" fill="url(#tile)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+  <circle cx="288" cy="368" r="14" fill="#2dd4bf"/>
+
+  <circle cx="368" cy="368" r="32" fill="url(#tile)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+  <circle cx="368" cy="368" r="14" fill="#a3e635"/>
+</svg>
