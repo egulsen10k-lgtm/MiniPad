@@ -150,58 +150,10 @@
     .sim-handle { position: absolute; z-index: 6; top: 50%; left: 0; display: flex; align-items: center; transform: translateY(-50%); cursor: pointer; }.sim-handle.right { left: auto; right: 0; flex-direction: row-reverse; }.handle-tab { width: 12px; height: 86px; border: 1px solid rgba(255,239,210,.32); border-left: 0; border-radius: 0 8px 8px 0; background: rgba(255,247,232,.14); box-shadow: 0 5px 16px rgba(0,0,0,.22); transition: width .2s, height .2s, background .2s, border-radius .2s; }.sim-handle.right .handle-tab { border-left: 1px solid rgba(255,239,210,.32); border-right: 0; border-radius: 8px 0 0 8px; }.sim-handle[data-style="Glass pill"] .handle-tab { width: 17px; height: 112px; border: 1px solid rgba(255,244,220,.34); border-radius: 0 12px 12px 0; background: rgba(255,247,232,.2); backdrop-filter: blur(14px); }.sim-handle.right[data-style="Glass pill"] .handle-tab { border-radius: 12px 0 0 12px; }.sim-handle[data-style="Notch"] .handle-tab { width: 22px; height: 72px; border-radius: 0 10px 10px 0; background: rgba(11,10,9,.8); }.sim-handle.right[data-style="Notch"] .handle-tab { border-radius: 10px 0 0 10px; }.handle-hint { position: absolute; left: 23px; width: 132px; padding: 7px 9px; border: 1px solid rgba(255,239,210,.18); border-radius: 7px; background: rgba(24,20,16,.92); color: rgba(255,247,232,.82); font-size: .65rem; line-height: 1.25; opacity: 0; transform: translateX(-7px); pointer-events: none; transition: opacity .18s, transform .18s; white-space: nowrap; }.sim-handle.right .handle-hint { left: auto; right: 23px; transform: translateX(7px); }.sim-handle:hover .handle-hint, .sim-handle:focus-visible .handle-hint { opacity: 1; transform: translateX(0); }
     .sim-drawer { position: absolute; z-index: 4; top: 88px; bottom: 22px; left: 20px; width: min(520px, calc(100% - 40px)); display: flex; flex-direction: column; padding: 15px; border: 1px solid rgba(255,255,255,.22); border-radius: 17px; background: rgba(19,23,31,.84); box-shadow: 0 24px 60px rgba(0,0,0,.44), inset 0 1px rgba(255,255,255,.15); backdrop-filter: blur(32px) saturate(130%); transform: translateX(0); transition: transform .38s cubic-bezier(.2,.8,.2,1), opacity .28s; overflow-y: auto; -webkit-overflow-scrolling: touch; }.sim-drawer.right { left: auto; right: 20px; }.sim-drawer.closed { transform: translateX(calc(-100% - 35px)); opacity: 0; pointer-events: none; }.sim-drawer.right.closed { transform: translateX(calc(100% + 35px)); }
 
-    /* Mobile-specific styles */
+    /* Mobile-specific adjustments without fixed viewport pinning */
     @media (max-width: 768px) {
-      .sim-drawer { 
-        position: fixed !important;
-        left: 0 !important; right: 0 !important; 
-        width: 100% !important; 
-        border-radius: 16px 16px 0 0 !important; 
-        bottom: 0 !important; 
-        border-left: none; border-right: none; 
-        height: 65vh;
-        max-height: 65vh;
-        z-index: 9;
-        transform: translateY(100%) !important;
-        transition: transform .38s cubic-bezier(.2,.8,.2,1), opacity .28s !important;
-      }
-      .sim-drawer.open { 
-        transform: translateY(0) !important; 
-        opacity: 1 !important; pointer-events: auto !important;
-      }
-      .sim-drawer.closed { 
-        transform: translateY(100%) !important; 
-        opacity: 0; pointer-events: none;
-      }
-
-      /* Handle fixed at bottom of viewport */
-      .sim-handle { 
-        position: fixed !important;
-        bottom: 0 !important;
-        left: 50% !important; right: auto !important; 
-        transform: translateX(-50%) !important;
-        width: 60px !important; height: 60px !important; 
-        z-index: 10 !important;
-        background: rgba(19,23,31,.95) !important;
-        border-radius: 16px 16px 0 0 !important;
-        border: 1px solid rgba(255,255,255,.1) !important;
-        border-bottom: none !important;
-        box-shadow: 0 -4px 20px rgba(0,0,0,.3) !important;
-      }
-      .sim-handle.right { left: 50% !important; right: auto !important; }
-      .handle-tab { display: none !important; }
-      .handle-hint { display: none !important; }
-      .sim-handle::before { 
-        content: "⋮"; 
-        font-size: 24px; 
-        color: rgba(255,255,255,.7); 
-        display: block; 
-        text-align: center; 
-        line-height: 60px;
-      }
-      .sim-menu { display: none !important; }
-      .sim-stage { min-height: 50vh !important; }
-      .demo-shell { padding-bottom: 60px !important; } /* Space for fixed handle */
+      .sim-stage { min-height: 420px !important; }
+      .sim-drawer { width: calc(100% - 24px) !important; left: 12px !important; right: 12px !important; }
     }
     .sim-top { display: flex; gap: 8px; align-items: center; }.sim-search { flex: 1; display: flex; gap: 8px; align-items: center; padding: 9px 11px; border: 1px solid rgba(255,255,255,.14); border-radius: 9px; background: rgba(255,255,255,.06); }.sim-search input { width: 100%; border: 0; outline: 0; background: transparent; color: #fff; font-size: .8rem; }.sim-search input::placeholder { color: rgba(255,255,255,.45); }.sim-close { border: 0; background: transparent; color: rgba(255,255,255,.55); cursor: pointer; font-size: 1rem; }
     .tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; padding: 12px 0 10px; }.tab { width: 100%; min-width: 0; height: 27px; padding: 0 5px; overflow: hidden; border: 1px solid rgba(255,255,255,.1); border-radius: 7px; background: transparent; color: rgba(255,255,255,.56); font-size: .63rem; line-height: 25px; text-align: center; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }.tab.active { border-color: rgba(255,255,255,.28); background: rgba(255,255,255,.13); color: #fff; }
@@ -324,27 +276,16 @@
     }
     function openLauncher() {
       drawer.classList.remove('closed');
-      if (isMobile) drawer.classList.add('open');
       if (!query && category !== 'All') {
         category = 'All';
         document.querySelectorAll('.tab').forEach(tab => tab.classList.toggle('active', tab.dataset.category === 'All'));
       }
       renderApps();
-      if (!isMobile) scheduleAutoHide();
+      scheduleAutoHide();
     }
     function toggleLauncher() {
-      if (isMobile) {
-        if (drawer.classList.contains('closed')) {
-          drawer.classList.add('open');
-          renderApps();
-        } else {
-          drawer.classList.add('closed');
-          drawer.classList.remove('open');
-        }
-      } else {
-        if (drawer.classList.contains('closed')) openLauncher();
-        else { clearTimeout(autoHideTimer); drawer.classList.add('closed'); }
-      }
+      if (drawer.classList.contains('closed')) openLauncher();
+      else { clearTimeout(autoHideTimer); drawer.classList.add('closed'); }
     }
     function setCategory(next) {
       if (next === 'Vault') {
@@ -360,47 +301,16 @@
     const handle = $('#simHandle');
     const hint = handle.querySelector('.handle-hint');
 
-    // Mobile: auto-open and update hint
-    if (isMobile) {
-      hint.textContent = 'Tap to open MiniPad';
-      setTimeout(openLauncher, 500);
-    }
+    // Universal interactions
+    handle.addEventListener('pointerenter', () => { clearTimeout(autoHideTimer); openLauncher(); });
+    handle.addEventListener('pointerleave', scheduleAutoHide);
+    drawer.addEventListener('pointerenter', () => { drawerHovering = true; clearTimeout(autoHideTimer); });
+    drawer.addEventListener('pointerleave', () => { drawerHovering = false; scheduleAutoHide(); });
 
-    // Desktop: hover interactions
-    if (!isMobile) {
-      handle.addEventListener('pointerenter', () => { clearTimeout(autoHideTimer); openLauncher(); });
-      handle.addEventListener('pointerleave', scheduleAutoHide);
-      drawer.addEventListener('pointerenter', () => { drawerHovering = true; clearTimeout(autoHideTimer); });
-      drawer.addEventListener('pointerleave', () => { drawerHovering = false; scheduleAutoHide(); });
-    }
-
-    // Universal: click handle to toggle (works on both)
     handle.addEventListener('click', (e) => {
       e.stopPropagation();
       toggleLauncher();
     });
-
-    // Mobile: tap outside to close (using composedPath for proper detection)
-    document.addEventListener('click', (e) => {
-      if (isMobile && !drawer.classList.contains('closed')) {
-        const path = e.composedPath ? e.composedPath() : [];
-        const clickedInsideDrawer = path.includes(drawer) || drawer.contains(e.target);
-        const clickedHandle = path.includes(handle) || handle.contains(e.target);
-        if (!clickedInsideDrawer && !clickedHandle) {
-          clearTimeout(autoHideTimer);
-          drawer.classList.add('closed');
-        }
-      }
-    });
-
-    // Mobile: scroll down to re-open when closed
-    let lastScrollY = window.scrollY;
-    window.addEventListener('scroll', () => {
-      if (isMobile && drawer.classList.contains('closed') && window.scrollY > lastScrollY + 150) {
-        openLauncher();
-      }
-      lastScrollY = window.scrollY;
-    }, { passive: true });
 
     // Prevent touch events on drawer from bubbling (fixes accidental close while scrolling inside)
     if (isMobile) {
