@@ -268,25 +268,24 @@
       background: rgba(18,22,30,.85);
       box-shadow: 0 20px 52px rgba(0,0,0,.38), inset 0 1px rgba(255,255,255,.1);
       backdrop-filter: blur(28px) saturate(130%);
+      transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
-    .preview-search {
-      display: flex; align-items: center; gap: 8px;
-      padding: 8px 10px;
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 8px;
-      background: rgba(255,255,255,.06);
-      color: rgba(255,255,255,.65);
-      font-size: .73rem;
-      margin-bottom: 12px;
-    }
-    .preview-apps {
-      display: grid; grid-template-columns: repeat(4,1fr); gap: 4px;
+    .preview-drawer:hover {
+      transform: scale(1.02) translateY(-2px);
+      border-color: rgba(224, 179, 110, 0.4);
+      box-shadow: 0 30px 60px rgba(0,0,0,.45), inset 0 1px rgba(255,255,255,.15), 0 0 30px rgba(224, 179, 110, 0.15);
     }
     .preview-app {
       padding: 7px 3px;
       border: 1px solid transparent;
       border-radius: 8px;
       text-align: center;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .preview-app:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.15);
     }
     .preview-icon {
       width: 34px; height: 34px;
@@ -545,8 +544,14 @@
       border: 1px solid transparent; border-radius: 10px;
       text-align: center; background: transparent;
       color: rgba(255,255,255,.78);
+      transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.2s, border-color 0.2s;
     }
-    .sim-app:hover { border-color: rgba(255,255,255,.14); background: rgba(255,255,255,.06); }
+    .sim-app:hover { 
+      transform: translateY(-4px) scale(1.05);
+      border-color: rgba(255,255,255,.14); 
+      background: rgba(255,255,255,.06); 
+      box-shadow: 0 8px 24px rgba(0,0,0,.2);
+    }
     .sim-app-icon {
       width: 42px; height: 42px; margin: auto;
       display: grid; place-items: center;
