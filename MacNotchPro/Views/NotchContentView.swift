@@ -2110,59 +2110,31 @@ struct ThemeBackground: View {
     var body: some View {
         switch theme {
         case .liquidGlass:
-            // Authentic Colorless / Pure Neutral Apple Liquid Glass
+            // TODO: replace with .glassEffect() when building with Xcode 26 SDK
             ZStack {
-                // 1. Deep Optical Neutral Glass Base Substrate
-                shape
-                    .fill(
-                        LinearGradient(
-                            colors: [
-                                Color(white: 0.14).opacity(opacity * 0.88),
-                                Color(white: 0.06).opacity(opacity * 0.96)
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                
-                // 2. Neutral Surface Specular Light Flare & Glaze
-                shape
-                    .fill(
-                        LinearGradient(
-                            stops: [
-                                .init(color: Color.white.opacity(0.16), location: 0.0),
-                                .init(color: Color.white.opacity(0.04), location: 0.35),
-                                .init(color: Color.clear, location: 0.75)
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                
-                // 3. Crisp Top-Edge Specular Glass Meniscus Highlight Line
-                shape
-                    .stroke(
-                        LinearGradient(
-                            stops: [
-                                .init(color: Color.white.opacity(isHovered ? 0.90 : 0.75), location: 0.0),
-                                .init(color: Color.white.opacity(0.35), location: 0.50),
-                                .init(color: Color.white.opacity(0.12), location: 1.0)
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 1.2
-                    )
-                
-                // 4. Subtle Neutral Inner Chamfer Bevel
-                shape
-                    .stroke(
-                        Color.white.opacity(isHovered ? 0.22 : 0.12),
-                        lineWidth: 0.8
-                    )
+                shape.fill(LinearGradient(
+                    colors: [Color(white: 0.14).opacity(opacity * 0.88), Color(white: 0.06).opacity(opacity * 0.96)],
+                    startPoint: .topLeading, endPoint: .bottomTrailing
+                ))
+                shape.fill(LinearGradient(
+                    stops: [
+                        .init(color: Color.white.opacity(0.16), location: 0.0),
+                        .init(color: Color.white.opacity(0.04), location: 0.35),
+                        .init(color: Color.clear, location: 0.75)
+                    ],
+                    startPoint: .topLeading, endPoint: .bottomTrailing
+                ))
+                shape.stroke(LinearGradient(
+                    stops: [
+                        .init(color: Color.white.opacity(isHovered ? 0.90 : 0.75), location: 0.0),
+                        .init(color: Color.white.opacity(0.35), location: 0.50),
+                        .init(color: Color.white.opacity(0.12), location: 1.0)
+                    ],
+                    startPoint: .topLeading, endPoint: .bottomTrailing
+                ), lineWidth: 1.2)
+                shape.stroke(Color.white.opacity(isHovered ? 0.22 : 0.12), lineWidth: 0.8)
             }
             .shadow(color: Color.black.opacity(isHovered ? 0.55 : 0.40), radius: isHovered ? 20 : 12, x: 2, y: 0)
-                
         case .frostedGlass:
             shape
                 .fill(Color(red: 0.07, green: 0.07, blue: 0.09).opacity(opacity))
