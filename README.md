@@ -24,12 +24,4 @@ A customizable native macOS Left-Edge Launchpad with categorized smart tabs, aut
 
 ## 🔒 Modal & Overlay Scroll-Lock
 
-- Whenever the **Grid Density popup modal**, **Folder popover**, or **Settings window** is active, background scroll wheel pagination is locked so internal controls can be adjusted without triggering page flips.
-
-## 🛠️ Build & Run
-
-```bash
-cd /Users/emincanglsn/Documents/noch/MiniPad
-swift build
-swift run
-```
+- Whenever the **Grid Density popup modal**, **Folder popover**, or **Settings window** is active, background scroll wheel pagination is locked so internal controls can be adjusted without triggering page flips
