@@ -214,6 +214,8 @@ struct ExpandedLaunchpadView: View {
     var onAppLaunched: () -> Void
 
     @State private var showDensityPopup: Bool = false
+    @State private var vaultPendingPath: String? = nil  // path waiting for PIN unlock
+    @State private var showVaultPin: Bool = false
     // Static so it survives view recreation when collapsing/expanding
     private static var _welcomeDismissed: Bool = false
     @State private var showWelcomeBanner: Bool = false
@@ -526,8 +528,12 @@ struct ExpandedLaunchpadView: View {
                                 cardFillColor: cardFillColor,
                                 cardStrokeColor: cardStrokeColor,
                                 onAppClick: { path in
-                                    appManager.launchApp(at: path) {
-                                        onAppLaunched()
+                                    if VaultManager.shared.isLocked(path) && !VaultManager.shared.isUnlocked {
+                                        VaultManager.shared.requestUnlock(for: path) {
+                                            appManager.launchApp(at: path) { onAppLaunched() }
+                                        }
+                                    } else {
+                                        appManager.launchApp(at: path) { onAppLaunched() }
                                     }
                                 }
                             )
@@ -671,6 +677,18 @@ struct ExpandedLaunchpadView: View {
                         }
                     },
                     onAppLaunched: onAppLaunched
+                )
+                .transition(.scale(scale: 0.92).combined(with: .opacity))
+            }
+
+            // Vault PIN Entry Modal
+            if VaultManager.shared.isAuthenticating {
+                VaultPinView(
+                    vaultManager: VaultManager.shared,
+                    textColor: textColor,
+                    accentColor: accentColor,
+                    cardFillColor: cardFillColor,
+                    cardStrokeColor: cardStrokeColor
                 )
                 .transition(.scale(scale: 0.92).combined(with: .opacity))
             }
@@ -1573,6 +1591,23 @@ struct LaunchpadItemCellView: View {
                 
                 Button("Delete App via AppCleaner...") {
                     Uninstaller.shared.uninstallApp(at: path)
+                }
+
+                Divider()
+
+                if VaultManager.shared.isLocked(path) {
+                    Button("Remove from Vault 🔓") {
+                        VaultManager.shared.unlock(path: path)
+                        appManager.filterItems()
+                    }
+                } else {
+                    Button("Add to Vault 🔒") {
+                        if !VaultManager.shared.hasPIN {
+                            VaultManager.shared.setPIN("0000")
+                        }
+                        VaultManager.shared.lock(path: path)
+                        appManager.filterItems()
+                    }
                 }
             } else if item.isFolder {
                 Button("Delete Folder") {
