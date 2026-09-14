@@ -93,6 +93,65 @@
       background: radial-gradient(800px circle at var(--mouse-x, 50vw) var(--mouse-y, 50vh), rgba(224,179,110,0.06), transparent 40%);
       transition: background 0.1s ease;
     }
+    
+    /* Reveal dust layer over simulator */
+    .dust-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background: rgba(18, 17, 15, 0.96);
+      /* Radial gradient masking: acts like a flashlight erasing exactly where the mouse is */
+      mask-image: radial-gradient(180px circle at var(--sim-mouse-x, 50%) var(--sim-mouse-y, 50%), transparent 0%, black 100%);
+      -webkit-mask-image: radial-gradient(180px circle at var(--sim-mouse-x, 50%) var(--sim-mouse-y, 50%), transparent 0%, black 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(224,179,110,1);
+      font-size: 1.1rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      opacity: 1;
+      transition: opacity 0.5s ease;
+    }
+    /* The hidden text beneath the dust */
+    .dust-hint {
+      position: absolute;
+      z-index: 1; /* Below dust, above wallpaper */
+      top: 50%; left: 60px;
+      transform: translateY(-50%);
+      color: rgba(255,255,255,0.7);
+      font-size: 1.4rem;
+      font-weight: 600;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      opacity: 0.8;
+      text-shadow: 0 2px 10px rgba(0,0,0,1);
+    }
+    .dust-hint .arrow {
+      font-size: 2rem;
+      color: var(--accent);
+      animation: bounceLeft 1.5s infinite;
+    }
+    @keyframes bounceLeft {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(-10px); }
+    }
+    .sim-stage:hover .dust-layer {
+      /* Keep dust active but mask follows cursor */
+      opacity: 1;
+    }
+    /* When drawing opens, fade out the whole dust effect */
+    .sim-stage.has-open-drawer .dust-layer,
+    .sim-stage.has-open-drawer .dust-hint {
+      opacity: 0;
+    }
+    
+    @media (max-width: 768px) {
+      .dust-layer, .dust-hint { display: none; }
+    }
 
     /* ─── Utility ────────────────────────────────────────────── */
     .wrap { width: min(var(--max), calc(100% - 48px)); margin: 0 auto; }
@@ -918,11 +977,15 @@
             </div>
           </div>
 
-          <div class="sim-stage">
+          <div class="sim-stage" id="simStage">
             <div class="window-bar">
               <span class="traffic"><i></i><i></i><i></i></span>
               <span class="window-title">Desktop / External Display</span>
             </div>
+            <div class="dust-hint">
+              <span class="arrow">←</span> Hover over the handle to open
+            </div>
+            <div class="dust-layer"></div>
             <div class="sim-wallpaper"></div>
             <div class="sim-menu" aria-hidden="true">
               <span class="sim-menu-left"><b>●</b><span>Finder</span><span>File</span><span>View</span></span>
@@ -1130,6 +1193,7 @@
     function openLauncher() {
       drawer.classList.remove('closed');
       handle.setAttribute('aria-expanded', 'true');
+      if (simStageForDust) simStageForDust.classList.add('has-open-drawer');
       renderApps();
       scheduleAutoHide();
     }
@@ -1137,6 +1201,7 @@
       clearTimeout(autoHideTimer);
       drawer.classList.add('closed');
       handle.setAttribute('aria-expanded', 'false');
+      if (simStageForDust) simStageForDust.classList.remove('has-open-drawer');
     }
     function toggleLauncher() {
       drawer.classList.contains('closed') ? openLauncher() : closeLauncher();
@@ -1268,6 +1333,17 @@
       document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
       document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
     });
+
+    const simStageForDust = document.getElementById('simStage');
+    if (simStageForDust) {
+      simStageForDust.addEventListener('mousemove', (e) => {
+        const rect = simStageForDust.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        simStageForDust.style.setProperty('--sim-mouse-x', `${x}px`);
+        simStageForDust.style.setProperty('--sim-mouse-y', `${y}px`);
+      });
+    }
 
     // ── Init ─────────────────────────────────────────────────
     renderApps(); updateSong(); updateClock();
