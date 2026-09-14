@@ -1,0 +1,15 @@
+{
+  "id": "session-1789381187668",
+  "startedAt": "2026-09-14T10:19:47.668Z",
+  "cwd": "/Users/emincanglsn/Documents/noch/MacNotchPro",
+  "context": {},
+  "metrics": {
+    "edits": 1,
+    "commands": 0,
+    "tasks": 0,
+    "errors": 0
+  },
+  "restoredAt": "2026-09-14T10:31:46.530Z",
+  "endedAt": "2026-09-14T11:40:18.802Z",
+  "duration": 4831135
+}

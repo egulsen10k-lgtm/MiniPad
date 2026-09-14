@@ -46,6 +46,11 @@ struct NotchContentView: View {
                     IdleHandleView(appSettings: appSettings)
                         .offset(y: vo)
                         .transition(.opacity)
+                        .onTapGesture {
+                            withAnimation(appSettings.animationStyle.spring) {
+                                launchpadState.setExpanded(true)
+                            }
+                        }
                 }
             }
             .animation(appSettings.animationStyle.spring, value: launchpadState.isExpanded)
@@ -53,12 +58,6 @@ struct NotchContentView: View {
             .animation(appSettings.animationStyle.spring, value: appSettings.gridColumns)
             .animation(appSettings.animationStyle.spring, value: appSettings.gridRows)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: isRight ? .trailing : .leading)
-            .onTapGesture(perform: launchpadState.isExpanded ? {} : {
-                withAnimation(appSettings.animationStyle.spring) {
-                    launchpadState.setExpanded(true)
-                }
-            })
-            .allowsHitTesting(!launchpadState.isExpanded)
             .contextMenu {
                 Button(launchpadState.isExpanded ? "Collapse Launchpad" : "Open Launchpad") { launchpadState.toggle() }
                 Divider()
