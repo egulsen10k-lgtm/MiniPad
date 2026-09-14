@@ -214,8 +214,9 @@ struct ExpandedLaunchpadView: View {
     var onAppLaunched: () -> Void
 
     @State private var showDensityPopup: Bool = false
+    // Static so it survives view recreation when collapsing/expanding
+    private static var _welcomeDismissed: Bool = false
     @State private var showWelcomeBanner: Bool = false
-    @State private var welcomeDismissed: Bool = false
     
     var body: some View {
         let sidebarShowing = launchpadState.isExpanded && appManager.selectedCategory == .all && appManager.searchText.isEmpty
@@ -431,7 +432,7 @@ struct ExpandedLaunchpadView: View {
                         onDismiss: {
                             withAnimation(.easeOut(duration: 0.2)) {
                                 showWelcomeBanner = false
-                                welcomeDismissed = true
+                                ExpandedLaunchpadView._welcomeDismissed = true
                             }
                         }
                     )
@@ -678,27 +679,27 @@ struct ExpandedLaunchpadView: View {
         .frame(width: appSettings.launchpadWidth, height: appSettings.launchpadHeight)
 
         .onAppear {
-            if launchpadState.isExpanded && appSettings.showWelcomeMessage && !welcomeDismissed {
+            if launchpadState.isExpanded && appSettings.showWelcomeMessage && !ExpandedLaunchpadView._welcomeDismissed {
                 withAnimation(.spring(response: 0.45, dampingFraction: 0.75)) {
                     showWelcomeBanner = true
                 }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
                     withAnimation(.easeOut(duration: 0.35)) {
                         showWelcomeBanner = false
-                        welcomeDismissed = true // Prevent showing again for this session
+                        ExpandedLaunchpadView._welcomeDismissed = true
                     }
                 }
             }
         }
         .onChange(of: launchpadState.isExpanded) { expanded in
-            if expanded && appSettings.showWelcomeMessage && !welcomeDismissed {
+            if expanded && appSettings.showWelcomeMessage && !ExpandedLaunchpadView._welcomeDismissed {
                 withAnimation(.spring(response: 0.45, dampingFraction: 0.75)) {
                     showWelcomeBanner = true
                 }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
                     withAnimation(.easeOut(duration: 0.35)) {
                         showWelcomeBanner = false
-                        welcomeDismissed = true // Prevent showing again for this session
+                        ExpandedLaunchpadView._welcomeDismissed = true // Prevent showing again for this session
                     }
                 }
             }
