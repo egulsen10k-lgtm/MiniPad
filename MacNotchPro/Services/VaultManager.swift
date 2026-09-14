@@ -90,7 +90,9 @@ class VaultManager: ObservableObject {
     }
 
     func isLocked(_ path: String) -> Bool {
-        lockedAppPaths.contains(path)
+        let result = lockedAppPaths.contains(path)
+        print("🔐 isLocked(\(path)) = \(result), lockedAppPaths = \(lockedAppPaths)")
+        return result
     }
 
     private func saveLockedApps() {
@@ -106,7 +108,9 @@ class VaultManager: ObservableObject {
 
     /// Call before launching a locked app. Shows PIN screen if needed.
     func requestUnlock(for path: String, then completion: @escaping () -> Void) {
+        print("🔒 requestUnlock for \()\(path) isUnlocked=\()\(isUnlocked)")
         if isUnlocked {
+            print("🔐 already unlocked")
             completion()
             return
         }

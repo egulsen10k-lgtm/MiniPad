@@ -722,6 +722,7 @@ class AppDiscoveryManager: ObservableObject {
     
     // MARK: - App Launching
     func launchApp(at path: String, completion: (() -> Void)? = nil) {
+        print("🚀 launchApp called for: \(path)")
         // .app bundles are directories — isDirectory:true is required for
         // openApplication(at:) to resolve the bundle correctly.
         let url = URL(fileURLWithPath: path, isDirectory: true)
@@ -731,9 +732,10 @@ class AppDiscoveryManager: ObservableObject {
         NSWorkspace.shared.openApplication(at: url, configuration: config) { _, error in
             DispatchQueue.main.async {
                 if let error = error {
+                    print("🚀 openApplication failed: \(error.localizedDescription)")
                     // Fallback: try the classic open(_:) API which resolves bundles more leniently.
                     NSWorkspace.shared.open(url)
-                    print("openApplication failed for \(path), fell back to open(_:): \(error.localizedDescription)")
+                    print("🚀 Fell back to open(_:)")
                 }
                 completion?()
             }

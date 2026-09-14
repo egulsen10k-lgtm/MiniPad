@@ -528,11 +528,16 @@ struct ExpandedLaunchpadView: View {
                                 cardFillColor: cardFillColor,
                                 cardStrokeColor: cardStrokeColor,
                                 onAppClick: { path in
+                                    print("🔍 App clicked: \(path)")
+                                    print("🔍 isLocked: \(VaultManager.shared.isLocked(path)), isUnlocked: \(VaultManager.shared.isUnlocked)")
                                     if VaultManager.shared.isLocked(path) && !VaultManager.shared.isUnlocked {
+                                        print("🔍 Requesting unlock for: \(path)")
                                         VaultManager.shared.requestUnlock(for: path) {
+                                            print("🔍 Unlock completed, launching app")
                                             appManager.launchApp(at: path) { onAppLaunched() }
                                         }
                                     } else {
+                                        print("🔍 Launching app directly")
                                         appManager.launchApp(at: path) { onAppLaunched() }
                                     }
                                 }

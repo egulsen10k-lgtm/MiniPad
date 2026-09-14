@@ -83,6 +83,7 @@ struct VaultModalView: View {
                     // Unlocked - show vault contents
                     VaultContentsView(
                         appManager: appManager,
+                        appSettings: appSettings,
                         vaultManager: vaultManager,
                         textColor: textColor,
                         accentColor: accentColor,
@@ -270,6 +271,7 @@ struct VaultUnlockView: View {
 // MARK: - Contents View (Unlocked)
 struct VaultContentsView: View {
     @ObservedObject var appManager: AppDiscoveryManager
+    @ObservedObject var appSettings: AppSettings
     @ObservedObject var vaultManager: VaultManager
     let textColor: Color
     let accentColor: Color
