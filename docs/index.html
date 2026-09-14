@@ -796,7 +796,40 @@
       .footer-inner > * + * { display: block; margin-top: 10px; }
       .proof-inner { gap: 24px; justify-content: flex-start; }
     }
-  </style>
+  
+    /* ─── Batch 20 Features ─────────────────────────────────── */
+    .site-banner { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: linear-gradient(90deg,#b87935,#7944c2); color:#fff; font-size:.78rem; padding:8px 16px; text-align:center; letter-spacing:.02em; font-weight:500; transition:transform .3s ease; }
+    .site-banner.hidden { transform: translateY(-100%); }
+    .site-banner .close-banner { float:right; background:rgba(255,255,255,.15); border:0; border-radius:6px; color:#fff; cursor:pointer; padding:2px 6px; font-size:.7rem; }
+    .skip-link { position:absolute; top:-40px; left:0; background:var(--accent); color:#0d0c0a; padding:8px 16px; z-index:200; font-weight:600; border-radius:0 0 8px 0; transition:top .2s; }
+    .skip-link:focus { top:0; }
+    .sticky-header { position:sticky; top:0; z-index:50; background:rgba(13,12,10,.92); backdrop-filter:blur(24px) saturate(140%); border-bottom:1px solid rgba(255,255,255,.06); }
+    .search-overlay { position:fixed; inset:0; z-index:90; background:rgba(13,12,10,.92); backdrop-filter:blur(20px); display:flex; align-items:flex-start; justify-content:center; padding-top:120px; opacity:0; pointer-events:none; transition:opacity .25s ease; }
+    .search-overlay.open { opacity:1; pointer-events:auto; }
+    .search-overlay input { width:min(600px,90vw); font-size:1.6rem; background:transparent; border:none; border-bottom:2px solid var(--accent); color:#fff; outline:0; padding:12px 0; font-family:var(--font-sans); }
+    .search-overlay .search-close { position:absolute; top:28px; right:28px; background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer; }
+    .mobile-menu-btn { display:none; position:fixed; top:16px; left:16px; z-index:60; background:rgba(13,12,10,.9); border:1px solid rgba(255,255,255,.15); border-radius:10px; padding:8px; color:#fff; font-size:1.1rem; cursor:pointer; }
+    @media(max-width:768px){ .mobile-menu-btn { display:flex; align-items:center; justify-content:center; } .nav-links { display:none; position:fixed; top:60px; left:0; right:0; background:rgba(13,12,10,.95); backdrop-filter:blur(20px); z-index:55; padding:20px; flex-direction:column; gap:12px; border-bottom:1px solid rgba(255,255,255,.1); } .nav-links.open { display:flex; } }
+    .floating-contact { position:fixed; bottom:24px; right:24px; z-index:50; }
+    .floating-contact a { display:flex; align-items:center; gap:8px; background:var(--accent); color:#0d0c0a; padding:10px 18px; border-radius:50px; font-weight:600; font-size:.85rem; box-shadow:var(--shadow-lg); text-decoration:none; transition:transform .2s, box-shadow .2s; }
+    .floating-contact a:hover { transform:translateY(-3px) scale(1.05); box-shadow:0 20px 50px rgba(0,0,0,.3); }
+    .back-top { position:fixed; bottom:24px; left:24px; z-index:50; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.1); border-radius:50%; width:44px; height:44px; display:flex; align-items:center; justify-content:center; color:#fff; cursor:pointer; opacity:0; transition:opacity .3s, transform .3s; pointer-events:none; }
+    .back-top.visible { opacity:1; pointer-events:auto; }
+    .back-top:hover { background:rgba(255,255,255,.15); transform:translateY(-4px); }
+    .scroll-progress { position:fixed; top:0; left:0; height:3px; background:linear-gradient(90deg,var(--accent),#e8b86d); z-index:100; width:0%; transition:width .05s linear; }
+    .form-field { border:1px solid var(--line); border-radius:8px; padding:10px 14px; background:var(--surface); color:var(--text); font-family:inherit; transition:border-color .2s; }
+    .form-field:focus { border-color:var(--accent); outline:none; }
+    .form-field.error { border-color:var(--red); background:rgba(224,136,112,.08); }
+    .form-field.success { border-color:var(--green); background:rgba(109,181,138,.08); }
+    .form-message { font-size:.82rem; margin-top:6px; font-weight:500; }
+    .form-message.error { color:var(--red); }
+    .form-message.success { color:var(--green); }
+    .load-pulse { animation: gentlePulse 2s ease-in-out infinite; }
+    .btn-solid:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,.3); }
+    .feature:hover { transform: translateY(-4px); border-color: rgba(255,255,255,.22); box-shadow: 0 12px 40px rgba(0,0,0,.25); }
+    .sim-app:hover { transform: translateY(-4px) scale(1.05); border-color: rgba(255,255,255,.14); background: rgba(255,255,255,.06); box-shadow: 0 8px 24px rgba(0,0,0,.2); }
+    @media print { .mouse-glow, .dust-layer, .sim-stage, .sim-handle, .sim-drawer, .sim-menu, .sim-closed, .back-top, .floating-contact, .mobile-menu-btn { display: none !important; } body { background: white !important; color: black !important; } a { color: black !important; text-decoration: underline !important; } .wrap { width:100% !important; max-width:100% !important; } }
+</style>
 </head>
 <body>
 
@@ -822,7 +855,16 @@
 
   <div class="mouse-glow"></div>
 
-  <main id="top">
+  
+  <div class="site-banner" id="siteBanner" role="banner" aria-label="Announcement"><button class="close-banner" onclick="document.getElementById('siteBanner').classList.add('hidden')" aria-label="Dismiss">✕</button><span>MiniPad v1.2.0 — Vault Privacy, Liquid Glass, Welcome Animation</span></div>
+  <a href="#demo" class="skip-link">Skip to content</a>
+  <button class="mobile-menu-btn" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Open menu">☰</button>
+  <a href="mailto:hello@minipad.app" class="floating-contact" aria-label="Contact"><span>✉</span> Contact</a>
+  <button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">↑</button>
+  <div class="search-overlay" id="searchOverlay" role="search" aria-label="Site search"><button class="search-close" onclick="closeSearch()" aria-label="Close">✕</button><input id="siteSearchInput" type="text" placeholder="Search MiniPad..." aria-label="Search" oninput="doSiteSearch(this.value)"></div>
+  <button onclick="openSearch()" aria-label="Open site search" style="position:fixed;top:28px;right:28px;z-index:60;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:white;font-size:1.1rem;cursor:pointer;">⌕</button>
+  <div class="scroll-progress" id="scrollProgress"></div>
+<main id="top">
 
     <!-- ── Hero ───────────────────────────────────────────── -->
     <section class="hero">
@@ -1362,5 +1404,12 @@
     renderApps(); updateSong(); updateClock();
     setInterval(updateClock, 30000);
   </script>
+<script>
+function openSearch(){document.getElementById('searchOverlay').classList.add('open');document.getElementById('siteSearchInput').focus();}
+function closeSearch(){document.getElementById('searchOverlay').classList.remove('open');}
+function doSiteSearch(q){const v=q.toLowerCase();document.querySelectorAll('.reveal,.feature').forEach(el=>{el.style.display=(v===""||el.textContent.toLowerCase().includes(v))?"":"none";});}
+document.addEventListener('keydown',e=>{if(e.key==="Escape")closeSearch();});
+window.addEventListener('scroll',()=>{const pct=(window.scrollY/(document.documentElement.scrollHeight-window.innerHeight))*100;document.getElementById('scrollProgress').style.width=pct+"%");document.getElementById('backTop').classList.toggle("visible",window.scrollY>600);});
+</script>
 </body>
 </html>
