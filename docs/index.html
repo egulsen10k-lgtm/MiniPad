@@ -275,6 +275,19 @@
       border-color: rgba(224, 179, 110, 0.4);
       box-shadow: 0 30px 60px rgba(0,0,0,.45), inset 0 1px rgba(255,255,255,.15), 0 0 30px rgba(224, 179, 110, 0.15);
     }
+    .preview-search {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 10px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 8px;
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.65);
+      font-size: .73rem;
+      margin-bottom: 12px;
+    }
+    .preview-apps {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; row-gap: 16px;
+    }
     .preview-app {
       padding: 7px 3px;
       border: 1px solid transparent;
@@ -499,7 +512,11 @@
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
       transform: translateX(0);
-      transition: transform .38s cubic-bezier(.2,.8,.2,1), opacity .28s;
+      transition: transform .38s cubic-bezier(.2,.8,.2,1), opacity .28s, box-shadow .3s, border-color .3s;
+    }
+    .sim-drawer:hover {
+      box-shadow: 0 40px 100px rgba(0,0,0,.65), inset 0 1px rgba(255,255,255,.2), 0 0 40px rgba(224, 179, 110, 0.15);
+      border-color: rgba(224, 179, 110, 0.35);
     }
     .sim-drawer.right { left: auto; right: 18px; }
     .sim-drawer.closed { transform: translateX(calc(-100% - 32px)); opacity: 0; pointer-events: none; }
@@ -535,8 +552,8 @@
     .sim-app-grid {
       flex: 1; min-height: 250px;
       display: grid; grid-template-columns: repeat(5,1fr);
-      align-content: start; gap: 4px;
-      overflow: auto; padding: 2px 0;
+      align-content: start; gap: 4px; row-gap: 16px;
+      overflow: hidden; padding: 10px 0;
     }
     .sim-app {
       appearance: none; width: 100%;
