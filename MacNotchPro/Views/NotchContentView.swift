@@ -685,6 +685,7 @@ struct ExpandedLaunchpadView: View {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
                     withAnimation(.easeOut(duration: 0.35)) {
                         showWelcomeBanner = false
+                        welcomeDismissed = true // Prevent showing again for this session
                     }
                 }
             }
@@ -697,6 +698,7 @@ struct ExpandedLaunchpadView: View {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
                     withAnimation(.easeOut(duration: 0.35)) {
                         showWelcomeBanner = false
+                        welcomeDismissed = true // Prevent showing again for this session
                     }
                 }
             }
