@@ -7,6 +7,7 @@ import SwiftUI
 import AppKit
 import Security
 import Combine
+import LocalAuthentication
 
 class VaultManager: ObservableObject {
     static let shared = VaultManager()
@@ -168,6 +169,17 @@ class VaultManager: ObservableObject {
     func lockVault() {
         cancelAuthTimer()
         isUnlocked = false
+    }
+
+    func verifyMacPassword(completion: @escaping (Bool) -> Void) {
+        // On macOS: prompt for system password when changing PIN (privacy/security)
+        let context = LAContext()
+        context.localizedReason = "Confirm your macOS password to modify Vault PIN"
+        context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: context.localizedReason) { success, error in
+            DispatchQueue.main.async {
+                completion(success)
+            }
+        }
     }
 
     // MARK: - Background Monitor
