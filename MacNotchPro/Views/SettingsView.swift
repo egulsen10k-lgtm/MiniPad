@@ -352,6 +352,16 @@ struct SettingsView: View {
                 
                 Toggle("Show Welcome Animation & Greeting on Open", isOn: $settings.showWelcomeMessage)
                     .font(.subheadline)
+                    
+                Divider()
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Toggle("Use Album Color Background for Spotify Widget", isOn: $settings.useAlbumColorWidget)
+                        .font(.subheadline)
+                    Text("Replaces the standard glass widget background with a vibrant gradient matched to the currently playing song's cover art.")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
             }
         }
     }

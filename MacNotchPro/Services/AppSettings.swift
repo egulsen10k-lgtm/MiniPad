@@ -193,6 +193,11 @@ class AppSettings: ObservableObject {
         didSet { objectWillChange.send() }
     }
     
+    // Toggle for Spotify/Music widget album art background
+    @AppStorage("useAlbumColorWidget") var useAlbumColorWidget: Bool = false {
+        didSet { objectWillChange.send() }
+    }
+    
     var itemsPerPage: Int {
         max(4, gridColumns * gridRows)
     }

@@ -130,10 +130,10 @@ struct MiniSpotifyBottomBar: View {
         .padding(.vertical, 6)
         .background(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .fill(cardFillColor)
+                .fill(AppSettings.shared.useAlbumColorWidget && musicManager.albumColor != nil ? musicManager.albumColor!.opacity(0.4) : cardFillColor)
                 .overlay(
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .stroke(musicManager.hasTrack ? accentColor.opacity(0.2) : cardStrokeColor, lineWidth: 0.6)
+                        .stroke(AppSettings.shared.useAlbumColorWidget && musicManager.albumColor != nil ? musicManager.albumColor!.opacity(0.8) : (musicManager.hasTrack ? accentColor.opacity(0.2) : cardStrokeColor), lineWidth: AppSettings.shared.useAlbumColorWidget && musicManager.albumColor != nil ? 1.0 : 0.6)
                 )
         )
     }

@@ -7,6 +7,7 @@ import Foundation
 import Combine
 import AppKit
 import MediaPlayer
+import SwiftUI
 
 class MusicManager: ObservableObject {
     static let shared = MusicManager()
@@ -18,6 +19,9 @@ class MusicManager: ObservableObject {
     @Published var sourceApp: String = ""
     @Published var hasTrack: Bool = false
     @Published var artwork: NSImage? = nil
+
+    // Color derived from artwork
+    @Published var albumColor: Color? = nil
     
     private var timer: Timer?
     private var lastArtworkURL: String? = nil
@@ -79,6 +83,7 @@ class MusicManager: ObservableObject {
                                     if let data = data, let image = NSImage(data: data) {
                                         DispatchQueue.main.async {
                                             self?.artwork = image
+                                            self?.extractColor(from: image)
                                         }
                                     }
                                 }.resume()
@@ -90,6 +95,9 @@ class MusicManager: ObservableObject {
                         if let artItem = nowPlaying?[MPMediaItemPropertyArtwork] as? MPMediaItemArtwork {
                             let img = artItem.image(at: CGSize(width: 80, height: 80))
                             self.artwork = img
+                            if let img = img {
+                                self.extractColor(from: img)
+                            }
                         }
                     }
                 }
@@ -107,6 +115,11 @@ class MusicManager: ObservableObject {
             
             DispatchQueue.main.async {
                 self.artwork = image
+                if let i = image {
+                    self.extractColor(from: i)
+                } else {
+                    self.albumColor = nil
+                }
                 if let t = title, !t.isEmpty {
                     self.title = t
                     self.artist = artist ?? ""
@@ -123,6 +136,30 @@ class MusicManager: ObservableObject {
                     self.hasTrack = false
                     self.artwork = nil
                     self.lastArtworkURL = nil
+                    self.albumColor = nil
+                }
+            }
+        }
+    }
+    
+    private func extractColor(from image: NSImage) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            guard AppSettings.shared.useAlbumColorWidget else { return }
+            guard let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else { return }
+            
+            let colorSpace = CGColorSpaceCreateDeviceRGB()
+            var pixel = [UInt8](repeating: 0, count: 4)
+            guard let context = CGContext(data: &pixel, width: 1, height: 1, bitsPerComponent: 8, bytesPerRow: 4, space: colorSpace, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else { return }
+            
+            context.draw(cgImage, in: CGRect(x: 0, y: 0, width: 1, height: 1))
+            
+            let r = Double(pixel[0]) / 255.0
+            let g = Double(pixel[1]) / 255.0
+            let b = Double(pixel[2]) / 255.0
+            
+            DispatchQueue.main.async { [weak self] in
+                withAnimation(.easeInOut(duration: 0.5)) {
+                    self?.albumColor = Color(red: r, green: g, blue: b)
                 }
             }
         }
