@@ -369,7 +369,7 @@ class PassThroughHostingView<Content: View>: NSHostingView<Content> {
         let canvasW = bounds.width
         let canvasH = bounds.height
         
-        if isExpanded {
+        if LaunchpadState.shared.isExpanded {
             // ── Expanded launchpad ─────────────────────────────────────────
             let lw = s.launchpadWidth + 8
             let lh = s.launchpadHeight + 8
