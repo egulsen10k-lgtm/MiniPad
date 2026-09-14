@@ -4,8 +4,8 @@
 //
 
 import SwiftUI
-import LocalAuthentication
 
+// MARK: - Main Vault Modal
 struct VaultModalView: View {
     @ObservedObject var appManager: AppDiscoveryManager
     @ObservedObject var appSettings: AppSettings
@@ -16,22 +16,6 @@ struct VaultModalView: View {
     let cardStrokeColor: Color
     var onClose: () -> Void
     var onAppLaunched: () -> Void
-
-    @State private var pin: String = ""
-    @State private var shake: Bool = false
-    @State private var isEditing: Bool = false
-    @State private var draggedAppPath: String? = nil
-    @State private var dropSideIsRight: Bool = false
-
-    private let digitCount = 4
-
-    private var lockedApps: [String] {
-        Array(vaultManager.lockedAppPaths).sorted { path1, path2 in
-            let name1 = (path1 as NSString).lastPathComponent.deletingPathExtension
-            let name2 = (path2 as NSString).lastPathComponent.deletingPathExtension
-            return name1.localizedStandardCompare(name2) == .orderedAscending
-        }
-    }
 
     var body: some View {
         ZStack {
@@ -61,7 +45,6 @@ struct VaultModalView: View {
 
                 // Content
                 if !vaultManager.hasPIN {
-                    // No PIN set - setup screen
                     VaultSetupView(
                         vaultManager: vaultManager,
                         textColor: textColor,
@@ -70,7 +53,6 @@ struct VaultModalView: View {
                         cardStrokeColor: cardStrokeColor
                     )
                 } else if !vaultManager.isUnlocked {
-                    // Locked - PIN entry
                     VaultUnlockView(
                         vaultManager: vaultManager,
                         textColor: textColor,
@@ -80,7 +62,6 @@ struct VaultModalView: View {
                         onUnlock: { vaultManager.isUnlocked = true }
                     )
                 } else {
-                    // Unlocked - show vault contents
                     VaultContentsView(
                         appManager: appManager,
                         appSettings: appSettings,
@@ -160,28 +141,28 @@ struct VaultSetupView: View {
             .padding(.bottom, 24)
         }
         .frame(width: 360)
+    }
 
-        private func append(_ digit: String) {
-            guard pin.count < 4 else { return }
-            pin += digit
-            if pin.count == 4 { handleComplete() }
-        }
+    func append(_ digit: String) {
+        guard pin.count < 4 else { return }
+        pin += digit
+        if pin.count == 4 { handleComplete() }
+    }
 
-        private func deleteLast() { pin.removeLast() }
+    func deleteLast() { pin.removeLast() }
 
-        private func handleComplete() {
-            if step == 1 {
-                step = 2
-                pin = ""
+    func handleComplete() {
+        if step == 1 {
+            step = 2
+            pin = ""
+        } else {
+            if pin == confirmPin {
+                vaultManager.savePIN(pin)
+                vaultManager.isUnlocked = true
             } else {
-                if pin == confirmPin {
-                    vaultManager.savePIN(pin)
-                    vaultManager.isUnlocked = true
-                } else {
-                    withAnimation(.spring(response: 0.2, dampingFraction: 0.3)) { shake = true }
-                    pin = ""
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { shake = false }
-                }
+                withAnimation(.spring(response: 0.2, dampingFraction: 0.3)) { shake = true }
+                pin = ""
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { shake = false }
             }
         }
     }
@@ -237,7 +218,7 @@ struct VaultUnlockView: View {
                     }
                 }
                 HStack(spacing: 10) {
-                    PinButton(label: "✕", accent: .red.opacity(0.8)) { vaultManager.isUnlocked = false; pin = "" }
+                    PinButton(label: "✕", accent: .red.opacity(0.8)) { pin = "" }
                     PinButton(label: "0", accent: accentColor) { append("0") }
                     PinButton(label: "⌫", accent: accentColor, isDelete: true) { deleteLast() }
                 }
@@ -245,25 +226,25 @@ struct VaultUnlockView: View {
             .padding(.bottom, 24)
         }
         .frame(width: 360)
-        .onAppear { DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { isFocused = true } }
+        .onAppear { DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { } }
+    }
 
-        private func append(_ digit: String) {
-            guard pin.count < 4 else { return }
-            pin += digit
-            if pin.count == 4 { submit() }
-        }
+    func append(_ digit: String) {
+        guard pin.count < 4 else { return }
+        pin += digit
+        if pin.count == 4 { submit() }
+    }
 
-        private func deleteLast() { pin.removeLast() }
+    func deleteLast() { pin.removeLast() }
 
-        private func submit() {
-            if vaultManager.verifyPIN(pin) {
-                withAnimation(.spring(response: 0.38, dampingFraction: 0.82)) {
-                    vaultManager.isUnlocked = true
-                }
-            } else {
-                pin = ""
-                withAnimation(.spring(response: 0.2, dampingFraction: 0.3)) { shake = true }
+    func submit() {
+        if vaultManager.verifyPIN(pin) {
+            withAnimation(.spring(response: 0.38, dampingFraction: 0.82)) {
+                vaultManager.isUnlocked = true
             }
+        } else {
+            pin = ""
+            withAnimation(.spring(response: 0.2, dampingFraction: 0.3)) { shake = true }
         }
     }
 }
@@ -285,8 +266,10 @@ struct VaultContentsView: View {
 
     private var lockedApps: [String] {
         Array(vaultManager.lockedAppPaths).sorted { path1, path2 in
-            let name1 = (path1 as NSString).lastPathComponent.deletingPathExtension
-            let name2 = (path2 as NSString).lastPathComponent.deletingPathExtension
+            let url1 = URL(fileURLWithPath: path1)
+            let url2 = URL(fileURLWithPath: path2)
+            let name1 = (url1.lastPathComponent as NSString).deletingPathExtension
+            let name2 = (url2.lastPathComponent as NSString).deletingPathExtension
             return name1.localizedStandardCompare(name2) == .orderedAscending
         }
     }
@@ -328,40 +311,25 @@ struct VaultContentsView: View {
                     spacing: 8
                 ) {
                     ForEach(lockedApps, id: \.self) { path in
-                        let name = (path as NSString).lastPathComponent.deletingPathExtension
+                        let url = URL(fileURLWithPath: path)
+                        let name = (url.lastPathComponent as NSString).deletingPathExtension
                         VaultAppCell(
                             path: path,
                             name: name,
                             isEditing: isEditing,
-                            isSelected: selectedApps.contains(path),
+                            isSelected: false,
                             textColor: textColor,
                             accentColor: accentColor,
                             cardFillColor: cardFillColor,
                             cardStrokeColor: cardStrokeColor,
-                            onTap: { handleTap(path) },
-                            onRemove: { removeFromVault(path) }
+                            onTap: { },
+                            onRemove: { }
                         )
                     }
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)
             }
-        }
-    }
-
-    private func handleTap(_ path: String) {
-        if isEditing {
-            withAnimation { selectedApps.symmetricDifference([path]) }
-        } else {
-            // Launch from vault - already unlocked so no PIN needed
-            // This would need appManager.launchApp call
-        }
-    }
-
-    private func removeFromVault(_ path: String) {
-        withAnimation(appSettings.animationStyle.spring) {
-            vaultManager.unlock(path: path)
-            selectedApps.remove(path)
         }
     }
 }
@@ -461,3 +429,4 @@ private struct ShakeModifier: ViewModifier {
             .animation(shake ? .default.repeatCount(5, autoreverses: true).speed(8) : .default, value: shake)
     }
 }
+

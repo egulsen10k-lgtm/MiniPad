@@ -50,7 +50,7 @@ class VaultManager: ObservableObject {
         isUnlocked = false
     }
 
-    private func savePIN(_ pin: String) {
+    func savePIN(_ pin: String) {
         let data = pin.data(using: .utf8)!
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
@@ -108,7 +108,7 @@ class VaultManager: ObservableObject {
 
     /// Call before launching a locked app. Shows PIN screen if needed.
     func requestUnlock(for path: String, then completion: @escaping () -> Void) {
-        print("🔒 requestUnlock for \()\(path) isUnlocked=\()\(isUnlocked)")
+        print("🔐 requestUnlock for " + path + " isUnlocked=" + String(isUnlocked))
         if isUnlocked {
             print("🔐 already unlocked")
             completion()
