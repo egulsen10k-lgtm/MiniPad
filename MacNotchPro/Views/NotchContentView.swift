@@ -1446,24 +1446,27 @@ struct LaunchpadItemCellView: View {
                 appManager.toggleSelection(itemId: item.id)
             }
         }
-        .onTapGesture {
-            if appManager.isEditing {
-                withAnimation {
-                    appManager.toggleSelection(itemId: item.id)
-                }
-            } else if item.isFolder {
-                withAnimation(appSettings.animationStyle.spring) {
-                    appManager.activeFolder = item
-                }
-            } else if let path = item.path {
-                onAppClick(path)
-            }
-        }
         .onHover { h in
             withAnimation(appSettings.animationStyle.spring) {
                 isHovered = h
             }
         }
+        .highPriorityGesture(
+            TapGesture()
+                .onEnded {
+                    if appManager.isEditing {
+                        withAnimation {
+                            appManager.toggleSelection(itemId: item.id)
+                        }
+                    } else if item.isFolder {
+                        withAnimation(appSettings.animationStyle.spring) {
+                            appManager.activeFolder = item
+                        }
+                    } else if let path = item.path {
+                        onAppClick(path)
+                    }
+                }
+        )
         .onDrag {
             // Normal mode: single app drag
             if !appManager.isEditing {
@@ -1901,12 +1904,15 @@ struct FolderModalView: View {
                                         }
                                     }
                                 )
-                                .onTapGesture {
-                                    appManager.launchApp(at: path) {
-                                        onClose()
-                                        onAppLaunched()
-                                    }
-                                }
+                                .highPriorityGesture(
+                                    TapGesture()
+                                        .onEnded {
+                                            appManager.launchApp(at: path) {
+                                                onClose()
+                                                onAppLaunched()
+                                            }
+                                        }
+                                )
                                 .onContinuousHover { phase in
                                     switch phase {
                                     case .active(let location):
