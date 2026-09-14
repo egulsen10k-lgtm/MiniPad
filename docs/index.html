@@ -84,6 +84,16 @@
       html { scroll-behavior: auto !important; }
     }
 
+    /* ─── Ambient Mouse Glow ─────────────────────────────────── */
+    .mouse-glow {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      background: radial-gradient(800px circle at var(--mouse-x, 50vw) var(--mouse-y, 50vh), rgba(224,179,110,0.06), transparent 40%);
+      transition: background 0.1s ease;
+    }
+
     /* ─── Utility ────────────────────────────────────────────── */
     .wrap { width: min(var(--max), calc(100% - 48px)); margin: 0 auto; }
     .eyebrow {
@@ -717,6 +727,8 @@
     </div>
   </header>
 
+  <div class="mouse-glow"></div>
+
   <main id="top">
 
     <!-- ── Hero ───────────────────────────────────────────── -->
@@ -1228,6 +1240,12 @@
       entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
     }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // ── Mouse Glow Tracking ──────────────────────────────────
+    document.addEventListener('mousemove', (e) => {
+      document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
+      document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
+    });
 
     // ── Init ─────────────────────────────────────────────────
     renderApps(); updateSong(); updateClock();
