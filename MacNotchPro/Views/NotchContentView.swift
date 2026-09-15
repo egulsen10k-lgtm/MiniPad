@@ -1340,8 +1340,8 @@ struct LaunchpadItemCellView: View {
                     }
                 }
                 
-                // Dwell Confirmation Ring on Drag-Over
-                if isTargetedForDrop && !item.isFolder {
+                // Dwell Confirmation Ring on Drag-Over (only if not dragging onto self)
+                if isTargetedForDrop && !item.isFolder && (appManager.draggedItemId == nil || appManager.draggedItemId != item.id) {
                     ZStack {
                         // Background guide track
                         Circle()
