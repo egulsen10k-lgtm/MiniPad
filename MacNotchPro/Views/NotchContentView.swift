@@ -214,8 +214,6 @@ struct ExpandedLaunchpadView: View {
     var onAppLaunched: () -> Void
 
     @State private var showDensityPopup: Bool = false
-    @State private var vaultPendingPath: String? = nil  // path waiting for PIN unlock
-    @State private var showVaultPin: Bool = false
     // Static so it survives view recreation when collapsing/expanding
     private static var _welcomeDismissed: Bool = false
     @State private var showWelcomeBanner: Bool = false
@@ -528,18 +526,7 @@ struct ExpandedLaunchpadView: View {
                                 cardFillColor: cardFillColor,
                                 cardStrokeColor: cardStrokeColor,
                                 onAppClick: { path in
-                                    print("🔍 App clicked: \(path)")
-                                    print("🔍 isLocked: \(VaultManager.shared.isLocked(path)), isUnlocked: \(VaultManager.shared.isUnlocked)")
-                                    if VaultManager.shared.isLocked(path) && !VaultManager.shared.isUnlocked {
-                                        print("🔍 Requesting unlock for: \(path)")
-                                        VaultManager.shared.requestUnlock(for: path) {
-                                            print("🔍 Unlock completed, launching app")
-                                            appManager.launchApp(at: path) { onAppLaunched() }
-                                        }
-                                    } else {
-                                        print("🔍 Launching app directly")
-                                        appManager.launchApp(at: path) { onAppLaunched() }
-                                    }
+                                    appManager.launchApp(at: path) { onAppLaunched() }
                                 }
                             )
                         }
@@ -682,18 +669,6 @@ struct ExpandedLaunchpadView: View {
                         }
                     },
                     onAppLaunched: onAppLaunched
-                )
-                .transition(.scale(scale: 0.92).combined(with: .opacity))
-            }
-
-            // Vault PIN Entry Modal
-            if VaultManager.shared.isAuthenticating {
-                VaultPinView(
-                    vaultManager: VaultManager.shared,
-                    textColor: textColor,
-                    accentColor: accentColor,
-                    cardFillColor: cardFillColor,
-                    cardStrokeColor: cardStrokeColor
                 )
                 .transition(.scale(scale: 0.92).combined(with: .opacity))
             }
@@ -1597,23 +1572,6 @@ struct LaunchpadItemCellView: View {
                 Button("Delete App via AppCleaner...") {
                     Uninstaller.shared.uninstallApp(at: path)
                 }
-
-                Divider()
-
-                if VaultManager.shared.isLocked(path) {
-                    Button("Remove from Vault 🔓") {
-                        VaultManager.shared.unlock(path: path)
-                        appManager.filterItems()
-                    }
-                } else {
-                    Button("Add to Vault 🔒") {
-                        if !VaultManager.shared.hasPIN {
-                            VaultManager.shared.setPIN("0000")
-                        }
-                        VaultManager.shared.lock(path: path)
-                        appManager.filterItems()
-                    }
-                }
             } else if item.isFolder {
                 Button("Delete Folder") {
                     withAnimation(appSettings.animationStyle.spring) {
@@ -1629,42 +1587,6 @@ struct LaunchpadItemCellView: View {
         .onChange(of: isTargetedForDrop) { targeted in
             dwellTimer?.invalidate()
             dwellTimer = nil
-            
-            if targeted {
-                dwellProgress = 0.0
-                
-                if !item.isFolder {
-                    // Start smooth timer: 18 ticks of 0.05s = 0.9s duration to fill the folder creation ring
-                    let totalTicks: CGFloat = 18.0
-                    var currentTick: CGFloat = 0.0
-                    
-                    let timer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { t in
-                        currentTick += 1.0
-                        let p = min(1.0, currentTick / totalTicks)
-                        withAnimation(.linear(duration: 0.05)) {
-                            dwellProgress = p
-                        }
-                        if p >= 1.0 {
-                            t.invalidate()
-                        }
-                    }
-                    RunLoop.main.add(timer, forMode: .common)
-                    dwellTimer = timer
-                } else if item.isFolder && !appManager.draggedItems.isEmpty {
-                    // Hovering over a folder for 0.45s: auto open it
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) {
-                        if isTargetedForDrop && !appManager.draggedItems.isEmpty {
-                            withAnimation(appSettings.animationStyle.spring) {
-                                appManager.activeFolder = item
-                            }
-                        }
-                    }
-                }
-            } else {
-                withAnimation(.easeOut(duration: 0.15)) {
-                    dwellProgress = 0.0
-                }
-            }
         }
     }
 }

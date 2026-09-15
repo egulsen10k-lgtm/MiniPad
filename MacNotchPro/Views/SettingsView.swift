@@ -11,10 +11,8 @@ struct SettingsView: View {
     @ObservedObject var iconManager = IconPackManager.shared
     var onClose: () -> Void = {}
     
-    @StateObject private var vaultManager = VaultManager.shared
     @State private var newPinInput: String = ""
     @State private var confirmPinInput: String = ""
-    @State private var vaultNotice: String = ""
     @State private var previewToggle: Bool = false
     @State private var selectedTab: SettingsTab = .appearance
     
@@ -22,7 +20,6 @@ struct SettingsView: View {
         case appearance = "Appearance & Themes"
         case behaviors = "Behaviors & Density"
         case displays = "Display & Screen"
-        case vault = "Vault & Privacy"
         case about = "About MiniPad"
         
         var id: String { self.rawValue }
@@ -32,7 +29,6 @@ struct SettingsView: View {
             case .appearance: return "paintpalette.fill"
             case .behaviors: return "slider.horizontal.3"
             case .displays: return "display.2"
-            case .vault: return "lock.shield.fill"
             case .about: return "info.circle.fill"
             }
         }
@@ -42,7 +38,6 @@ struct SettingsView: View {
             case .appearance: return .purple
             case .behaviors: return .orange
             case .displays: return .blue
-            case .vault: return .yellow
             case .about: return .green
             }
         }
@@ -121,8 +116,6 @@ struct SettingsView: View {
                             behaviorSettings
                         case .displays:
                             displaySettings
-                        case .vault:
-                            vaultSettings
                         case .about:
                             aboutSettings
                         }
@@ -150,26 +143,6 @@ struct SettingsView: View {
         .frame(width: 720, height: 620)
     }
     
-    @ViewBuilder
-    private var vaultSettings: some View {
-        SettingsCardView(title: "App Privacy Vault", icon: "lock.shield.fill") {
-            VStack(alignment: .leading, spacing: 14) {
-                Text("Lock sensitive apps behind a PIN.")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                if vaultManager.hasPIN {
-                    Label("PIN Set — Lock Enabled", systemImage: "lock.shield.fill")
-                        .font(.subheadline.bold())
-                        .foregroundColor(.green)
-                } else {
-                    Label("PIN Not Set — Configure Below", systemImage: "exclamationmark.triangle.fill")
-                        .font(.subheadline.bold())
-                        .foregroundColor(.red)
-                }
-            }
-        }
-    }
-
     // MARK: - Tab Contents
     
     @ViewBuilder

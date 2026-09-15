@@ -19,7 +19,6 @@ enum AppCategory: String, CaseIterable, Identifiable {
     case social = "Social & Chat"
     case utilities = "Utilities"
     case folders = "Folders"
-    case vault = "Vault"
     
     var id: String { rawValue }
     
@@ -35,7 +34,6 @@ enum AppCategory: String, CaseIterable, Identifiable {
         case .social:       return "message.fill"
         case .utilities:    return "wrench.and.screwdriver.fill"
         case .folders:      return "folder.fill"
-        case .vault:        return "lock.shield.fill"
         }
     }
 }
@@ -339,13 +337,7 @@ class AppDiscoveryManager: ObservableObject {
         var baseItems = items
         
         // Apply Category Filter
-        if selectedCategory == .vault {
-            let vault = VaultManager.shared
-            baseItems = baseItems.filter { item in
-                guard !item.isFolder, let path = item.path else { return false }
-                return vault.isLocked(path)
-            }
-        } else if selectedCategory == .folders {
+        if selectedCategory == .folders {
             baseItems = baseItems.filter { $0.isFolder }
         } else if selectedCategory != .all {
             baseItems = baseItems.filter { item in
