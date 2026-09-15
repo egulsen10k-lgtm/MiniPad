@@ -607,7 +607,7 @@
     .sim-search input::placeholder { color: rgba(255,255,255,.4); }
     .sim-close { border: 0; background: transparent; color: rgba(255,255,255,.5); font-size: 1rem; }
 
-    .tabs {
+    .tabs { overscroll-behavior-x: contain; overflow-x: auto; -webkit-overflow-scrolling: touch;
       display: grid; grid-template-columns: repeat(3,minmax(0,1fr));
       gap: 4px; padding: 11px 0 9px;
     }
@@ -789,7 +789,7 @@
       .segmented { margin-top: 12px; }
       .sim-stage { min-height: 440px; }
       .sim-drawer { width: calc(100% - 24px) !important; left: 12px !important; right: 12px !important; }
-      .tabs { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .tabs { overscroll-behavior-x: contain; overflow-x: auto; -webkit-overflow-scrolling: touch; grid-template-columns: repeat(2,minmax(0,1fr)); }
       .sim-app-grid { grid-template-columns: repeat(4,1fr); }
       .demo-controls { grid-template-columns: repeat(2,1fr); }
       .footer-inner { display: block; }
