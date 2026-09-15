@@ -856,7 +856,7 @@
   <div class="mouse-glow"></div>
 
   
-  <div class="site-banner" id="siteBanner" role="banner" aria-label="Announcement"><button class="close-banner" onclick="document.getElementById('siteBanner').classList.add('hidden')" aria-label="Dismiss">✕</button><span>MiniPad v1.2.0 — Vault Privacy, Liquid Glass, Welcome Animation</span></div>
+  <div class="site-banner" id="siteBanner" role="banner" aria-label="Announcement"><button class="close-banner" onclick="document.getElementById('siteBanner').classList.add('hidden')" aria-label="Dismiss">✕</button><span>MiniPad v1.2.0 — Liquid Glass, Welcome Animation</span></div>
   <a href="#demo" class="skip-link">Skip to content</a>
   <button class="mobile-menu-btn" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Open menu">☰</button>
   <a href="mailto:hello@minipad.app" class="floating-contact" aria-label="Contact"><span>✉</span> Contact</a>
@@ -984,8 +984,7 @@
           <article class="feature reveal" style="transition-delay:.08s">
             <div class="feature-icon" aria-hidden="true">⊛</div>
             <span class="feature-label">05 / PRIVACY</span>
-            <h3>PIN-protected Vault</h3>
-            <p>Keep sensitive shortcuts and developer tools in a Vault category, hidden behind a PIN at rest.</p>
+
           </article>
           <article class="feature reveal" style="transition-delay:.12s">
             <div class="feature-icon" aria-hidden="true">⊟</div>
@@ -1062,7 +1061,6 @@
                 <button class="tab" data-category="Productivity" role="tab" aria-selected="false">Productivity</button>
                 <button class="tab" data-category="Apple" role="tab" aria-selected="false">Apple</button>
                 <button class="tab" data-category="Utilities" role="tab" aria-selected="false">Utilities</button>
-                <button class="tab" data-category="Vault" role="tab" aria-selected="false">Vault · locked</button>
               </div>
               <div class="sim-app-grid" id="simApps" role="list"></div>
               <div class="sim-footer">
@@ -1206,7 +1204,7 @@
       ['Notion','Productivity'],['Figma','Productivity'],['Linear','Productivity'],['Slack','Productivity'],['Obsidian','Productivity'],
       ['Safari','Apple'],['Music','Apple'],['Finder','Apple'],['Notes','Apple'],['Settings','Apple'],
       ['AppCleaner','Utilities'],['Raycast','Utilities'],['Monitor','Utilities'],['Shortcuts','Utilities'],
-      ['SSH Keys','Vault'],['GPG Keychain','Vault']
+      ['SSH Keys'],['GPG Keychain','Vault']
     ];
     const songs = [
       ['Midnight City','M83 · Spotify','♫'],
@@ -1263,10 +1261,6 @@
 
     // ── Category tabs ────────────────────────────────────────
     function setCategory(next) {
-      if (next === 'Vault') {
-        const pin = prompt('Enter Vault PIN (demo: 0000)');
-        if (pin !== '0000') { alert('Vault remains locked.'); return; }
-      }
       category = next;
       document.querySelectorAll('.tab').forEach(tab => {
         const active = tab.dataset.category === category;
