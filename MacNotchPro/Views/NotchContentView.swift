@@ -1587,6 +1587,14 @@ struct LaunchpadItemCellView: View {
         .onChange(of: isTargetedForDrop) { targeted in
             dwellTimer?.invalidate()
             dwellTimer = nil
+            if targeted && !item.isFolder {
+                dwellProgress = 0.0
+                dwellTimer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { _ in
+                    withAnimation(.linear(duration: 0.05)) {
+                        dwellProgress = min(1.0, dwellProgress + 0.05)
+                    }
+                }
+            }
         }
     }
 }
