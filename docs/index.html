@@ -856,13 +856,13 @@
   <div class="mouse-glow"></div>
 
   
-  <div class="site-banner" id="siteBanner" role="banner" aria-label="Announcement"><button class="close-banner" onclick="document.getElementById('siteBanner').classList.add('hidden')" aria-label="Dismiss">✕</button><span>MiniPad v1.2.0 — Liquid Glass, Welcome Animation</span></div>
+  <div class="site-banner" id="siteBanner" role="banner" aria-label="Announcement"><button class="close-banner" onclick="document.getElementById('siteBanner').classList.add('hidden')" aria-label="Dismiss">✕</button><span>MiniPad v1.2.0</span></div>
   <a href="#demo" class="skip-link">Skip to content</a>
   <button class="mobile-menu-btn" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Open menu">☰</button>
   <a href="mailto:hello@minipad.app" class="floating-contact" aria-label="Contact"><span>✉</span> Contact</a>
   <button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">↑</button>
-  <div class="search-overlay" id="searchOverlay" role="search" aria-label="Site search"><button class="search-close" onclick="closeSearch()" aria-label="Close">✕</button><input id="siteSearchInput" type="text" placeholder="Search MiniPad..." aria-label="Search" oninput="doSiteSearch(this.value)"></div>
-  <button onclick="openSearch()" aria-label="Open site search" style="position:fixed;top:28px;right:28px;z-index:60;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:white;font-size:1.1rem;cursor:pointer;">⌕</button>
+
+
   <div class="scroll-progress" id="scrollProgress"></div>
 <main id="top">
 
@@ -1399,10 +1399,7 @@
     setInterval(updateClock, 30000);
   </script>
 <script>
-function openSearch(){document.getElementById('searchOverlay').classList.add('open');document.getElementById('siteSearchInput').focus();}
-function closeSearch(){document.getElementById('searchOverlay').classList.remove('open');}
-function doSiteSearch(q){const v=q.toLowerCase();document.querySelectorAll('.reveal,.feature').forEach(el=>{el.style.display=(v===""||el.textContent.toLowerCase().includes(v))?"":"none";});}
-document.addEventListener('keydown',e=>{if(e.key==="Escape")closeSearch();});
+
 window.addEventListener('scroll',()=>{const pct=(window.scrollY/(document.documentElement.scrollHeight-window.innerHeight))*100;document.getElementById('scrollProgress').style.width=pct+"%");document.getElementById('backTop').classList.toggle("visible",window.scrollY>600);});
 </script>
 </body>
