@@ -1522,7 +1522,7 @@ struct LaunchpadItemCellView: View {
                             if item.isFolder {
                                 appManager.addMultipleItemsToFolder(sourceIds: sourceIds, folderId: item.id)
                             } else if isCircleFullyLoaded {
-                                if let singleId = sourceIds.first {
+                                if let singleId = sourceIds.first, singleId != item.id {
                                     appManager.createFolder(with: singleId, onto: item.id)
                                 }
                             } else {
