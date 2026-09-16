@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>404 — Surface Not Found · MiniPad</title>
+  <meta name="description" content="The page or surface you are looking for has moved or does not exist.">
+  <meta name="theme-color" content="#0d0c0a">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg:        #0d0c0a;
+      --bg-deep:   #080706;
+      --surface:   #161410;
+      --surface-2: #1f1c17;
+      --surface-3: #2a2620;
+      --line:      #3a342b;
+      --line-soft: rgba(255,240,210,.08);
+      --text:      #f4efe5;
+      --muted:     #b2a99c;
+      --quiet:     #7a7268;
+      --accent:    #e8b86d;
+      --accent-hi: #c9912b;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 22px;
+      --radius-xl: 32px;
+      --shadow-lg: 0 28px 80px rgba(0,0,0,.44);
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans:  'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Ambient noise & mouse glow */
+    body::before {
+      content: "";
+      position: fixed; inset: 0;
+      pointer-events: none;
+      opacity: .18;
+      background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+      z-index: 0;
+    }
+
+    .mouse-glow {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background: radial-gradient(800px circle at var(--mouse-x, 50vw) var(--mouse-y, 50vh), rgba(232,184,109,0.07), transparent 45%);
+      transition: background 0.08s ease;
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      width: min(520px, 100%);
+      background: rgba(22,20,16,.82);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg), 0 0 60px rgba(232,184,109,.06);
+      backdrop-filter: blur(32px) saturate(140%);
+      overflow: hidden;
+      text-align: center;
+      padding: 0 0 40px;
+      animation: enter .5s cubic-bezier(.2,.8,.2,1);
+    }
+
+    @keyframes enter {
+      from { opacity: 0; transform: translateY(16px) scale(.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .window-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      background: rgba(255,255,255,.025);
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    .traffic {
+      display: flex;
+      gap: 7px;
+    }
+
+    .traffic span {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: #3a342b;
+    }
+
+    .traffic span:nth-child(1) { background: #e06c53; }
+    .traffic span:nth-child(2) { background: #e5b95c; }
+    .traffic span:nth-child(3) { background: #5db779; }
+
+    .window-title {
+      font-size: .74rem;
+      color: var(--quiet);
+      font-family: ui-monospace, monospace;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .content {
+      padding: 44px 32px 10px;
+    }
+
+    .error-code {
+      font-family: var(--font-serif);
+      font-size: clamp(5.2rem, 18vw, 7.5rem);
+      font-weight: 900;
+      line-height: .95;
+      letter-spacing: -.05em;
+      background: linear-gradient(180deg, var(--text) 30%, rgba(244,239,229,.35) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 14px;
+    }
+
+    .error-tag {
+      display: inline-block;
+      color: var(--accent);
+      font: 600 .72rem/1.2 ui-monospace, monospace;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border: 1px solid rgba(232,184,109,.25);
+      border-radius: 50px;
+      background: rgba(232,184,109,.07);
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      margin-bottom: 10px;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    p {
+      color: var(--muted);
+      font-size: .92rem;
+      line-height: 1.55;
+      max-width: 380px;
+      margin: 0 auto 32px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 11px 22px;
+      border-radius: var(--radius-md);
+      font-size: .86rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform .2s, background .2s, border-color .2s, box-shadow .2s;
+      cursor: pointer;
+    }
+
+    .btn-solid {
+      background: var(--text);
+      color: var(--bg);
+      border: 1px solid transparent;
+      box-shadow: 0 4px 16px rgba(0,0,0,.3);
+    }
+
+    .btn-solid:hover {
+      background: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(232,184,109,.25);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+
+    .btn-ghost:hover {
+      background: var(--surface-2);
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    footer {
+      margin-top: 28px;
+      color: var(--quiet);
+      font-size: .74rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    footer a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .18s;
+    }
+
+    footer a:hover {
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <div class="mouse-glow"></div>
+
+  <div class="card">
+    <div class="window-bar">
+      <div class="traffic">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <span class="window-title">minipad — status: 404</span>
+      <div style="width: 48px;"></div>
+    </div>
+
+    <div class="content">
+      <span class="error-tag">Edge Out of Bounds</span>
+      <div class="error-code">404</div>
+      <h1>Lost at the <em>screen edge.</em></h1>
+      <p>The page or release file you're looking for has moved, collapsed, or doesn't exist.</p>
+
+      <div class="actions">
+        <a class="btn btn-solid" href="./">← Return to MiniPad</a>
+        <a class="btn btn-ghost" href="https://github.com/egulsen10k-lgtm/MiniPad/releases/latest">GitHub Releases</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span>MiniPad Native Launch Surface · <a href="./">Home</a></span>
+  </footer>
+
+  <script>
+    document.addEventListener('mousemove', (e) => {
+      document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
+      document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
+    });
+  </script>
+</body>
+</html>
