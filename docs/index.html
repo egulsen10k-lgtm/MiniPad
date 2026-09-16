@@ -798,16 +798,9 @@
     }
   
     /* ─── Batch 20 Features ─────────────────────────────────── */
-    .site-banner { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: linear-gradient(90deg,#b87935,#7944c2); color:#fff; font-size:.78rem; padding:8px 16px; text-align:center; letter-spacing:.02em; font-weight:500; transition:transform .3s ease; }
-    .site-banner.hidden { transform: translateY(-100%); }
-    .site-banner .close-banner { float:right; background:rgba(255,255,255,.15); border:0; border-radius:6px; color:#fff; cursor:pointer; padding:2px 6px; font-size:.7rem; }
     .skip-link { position:absolute; top:-40px; left:0; background:var(--accent); color:#0d0c0a; padding:8px 16px; z-index:200; font-weight:600; border-radius:0 0 8px 0; transition:top .2s; }
     .skip-link:focus { top:0; }
     .sticky-header { position:sticky; top:0; z-index:50; background:rgba(13,12,10,.92); backdrop-filter:blur(24px) saturate(140%); border-bottom:1px solid rgba(255,255,255,.06); }
-    .search-overlay { position:fixed; inset:0; z-index:90; background:rgba(13,12,10,.92); backdrop-filter:blur(20px); display:flex; align-items:flex-start; justify-content:center; padding-top:120px; opacity:0; pointer-events:none; transition:opacity .25s ease; }
-    .search-overlay.open { opacity:1; pointer-events:auto; }
-    .search-overlay input { width:min(600px,90vw); font-size:1.6rem; background:transparent; border:none; border-bottom:2px solid var(--accent); color:#fff; outline:0; padding:12px 0; font-family:var(--font-sans); }
-    .search-overlay .search-close { position:absolute; top:28px; right:28px; background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer; }
     .mobile-menu-btn { display:none; position:fixed; top:16px; left:16px; z-index:60; background:rgba(13,12,10,.9); border:1px solid rgba(255,255,255,.15); border-radius:10px; padding:8px; color:#fff; font-size:1.1rem; cursor:pointer; }
     @media(max-width:768px){ .mobile-menu-btn { display:flex; align-items:center; justify-content:center; } .nav-links { display:none; position:fixed; top:60px; left:0; right:0; background:rgba(13,12,10,.95); backdrop-filter:blur(20px); z-index:55; padding:20px; flex-direction:column; gap:12px; border-bottom:1px solid rgba(255,255,255,.1); } .nav-links.open { display:flex; } }
     .floating-contact { position:fixed; bottom:24px; right:24px; z-index:50; }
@@ -856,7 +849,6 @@
   <div class="mouse-glow"></div>
 
   
-  <div class="site-banner" id="siteBanner" role="banner" aria-label="Announcement"><button class="close-banner" onclick="document.getElementById('siteBanner').classList.add('hidden')" aria-label="Dismiss">✕</button><span>MiniPad v1.2.0</span></div>
   <a href="#demo" class="skip-link">Skip to content</a>
   <button class="mobile-menu-btn" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Open menu">☰</button>
   <a href="mailto:hello@minipad.app" class="floating-contact" aria-label="Contact"><span>✉</span> Contact</a>
