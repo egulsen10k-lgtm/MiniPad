@@ -300,7 +300,7 @@ class AppSettings: ObservableObject {
         didSet { objectWillChange.send() }
     }
     
-    @AppStorage("folderSortAlphabetical") var folderSortAlphabetical: Bool = true {
+    @AppStorage("folderSortAlphabetical") var folderSortAlphabetical: Bool = false {
         didSet { objectWillChange.send() }
     }
     
