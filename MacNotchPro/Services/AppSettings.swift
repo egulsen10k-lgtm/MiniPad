@@ -205,12 +205,12 @@ class AppSettings: ObservableObject {
     // Responsive adaptive dimensions based on density
     var launchpadWidth: CGFloat {
         switch gridColumns {
-        case ...3: return 530
-        case 4:    return 620
-        case 5:    return 710
-        case 6:    return 800
-        case 7:    return 890
-        default:   return 970 // 8
+        case ...3: return 480
+        case 4:    return 560
+        case 5:    return 640
+        case 6:    return 720
+        case 7:    return 800
+        default:   return 880 // 8
         }
     }
     

@@ -514,8 +514,8 @@ struct ExpandedLaunchpadView: View {
                     Spacer()
                 } else {
                     LazyVGrid(
-                        columns: Array(repeating: GridItem(.flexible(), spacing: 2), count: appSettings.gridColumns),
-                        spacing: 4
+                        columns: Array(repeating: GridItem(.flexible(), spacing: 1), count: appSettings.gridColumns),
+                        spacing: 3
                     ) {
                         ForEach(currentItems) { item in
                             LaunchpadItemCellView(
@@ -1378,8 +1378,8 @@ struct LaunchpadItemCellView: View {
                     .padding(.top, 1)
             }
         }
-        .padding(.vertical, appSettings.showAppNames ? 2 : 0)
-        .padding(.horizontal, 1)
+        .padding(.vertical, appSettings.showAppNames ? 1 : 0)
+        .padding(.horizontal, 0.5)
         .rotationEffect(.degrees(appManager.isEditing ? 1.2 : 0))
         .animation(appManager.isEditing ? Animation.easeInOut(duration: 0.11).repeatForever(autoreverses: true) : .default, value: appManager.isEditing)
         .overlay(

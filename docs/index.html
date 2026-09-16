@@ -332,7 +332,7 @@
     /* The floating drawer preview */
     .preview-drawer {
       position: absolute; z-index: 3; top: 56px; left: 20px;
-      width: min(300px, calc(100% - 40px));
+      width: min(270px, calc(100% - 40px));
       padding: 13px;
       border: 1px solid rgba(255,255,255,.2);
       border-radius: 16px;
@@ -357,7 +357,7 @@
       margin-bottom: 12px;
     }
     .preview-apps {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; row-gap: 16px;
+      display: grid; grid-template-columns: repeat(4, 1fr); column-gap: 2px; row-gap: 10px;
     }
     .preview-app {
       padding: 7px 3px;
@@ -572,7 +572,7 @@
     .sim-drawer {
       position: absolute; z-index: 4;
       top: 85px; bottom: 18px; left: 18px;
-      width: min(520px, calc(100% - 36px));
+      width: min(460px, calc(100% - 36px));
       display: flex; flex-direction: column;
       padding: 14px;
       border: 1px solid rgba(255,255,255,.2);
@@ -623,12 +623,12 @@
     .sim-app-grid {
       flex: 1; min-height: 250px;
       display: grid; grid-template-columns: repeat(5,1fr);
-      align-content: start; gap: 4px; row-gap: 16px;
-      overflow: hidden; padding: 10px 0;
+      align-content: start; column-gap: 2px; row-gap: 12px;
+      overflow: hidden; padding: 8px 0;
     }
     .sim-app {
       appearance: none; width: 100%;
-      padding: 10px 3px 8px;
+      padding: 8px 2px 6px;
       border: 1px solid transparent; border-radius: 10px;
       text-align: center; background: transparent;
       color: rgba(255,255,255,.78);
@@ -790,7 +790,7 @@
       .sim-stage { min-height: 440px; }
       .sim-drawer { width: calc(100% - 24px) !important; left: 12px !important; right: 12px !important; }
       .tabs { overscroll-behavior-x: contain; overflow-x: auto; -webkit-overflow-scrolling: touch; grid-template-columns: repeat(2,minmax(0,1fr)); }
-      .sim-app-grid { grid-template-columns: repeat(4,1fr); }
+      .sim-app-grid { grid-template-columns: repeat(4,1fr); column-gap: 2px; row-gap: 12px; }
       .demo-controls { grid-template-columns: repeat(2,1fr); }
       .footer-inner { display: block; }
       .footer-inner > * + * { display: block; margin-top: 10px; }
