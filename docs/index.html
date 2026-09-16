@@ -809,7 +809,7 @@
     .back-top { position:fixed; bottom:24px; left:24px; z-index:50; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.1); border-radius:50%; width:44px; height:44px; display:flex; align-items:center; justify-content:center; color:#fff; cursor:pointer; opacity:0; transition:opacity .3s, transform .3s; pointer-events:none; }
     .back-top.visible { opacity:1; pointer-events:auto; }
     .back-top:hover { background:rgba(255,255,255,.15); transform:translateY(-4px); }
-    .scroll-progress { position:fixed; top:0; left:0; height:3px; background:linear-gradient(90deg,var(--accent),#e8b86d); z-index:100; width:0%; transition:width .05s linear; }
+    .scroll-progress { position:fixed; top:0; left:0; height:4px; background:linear-gradient(90deg,var(--accent),#e8b86d); z-index:100; width:0%; transition:width .08s ease-out; box-shadow:0 0 8px var(--accent), 0 0 16px var(--accent); }
     .form-field { border:1px solid var(--line); border-radius:8px; padding:10px 14px; background:var(--surface); color:var(--text); font-family:inherit; transition:border-color .2s; }
     .form-field:focus { border-color:var(--accent); outline:none; }
     .form-field.error { border-color:var(--red); background:rgba(224,136,112,.08); }
