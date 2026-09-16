@@ -1996,6 +1996,7 @@ struct TransferAppsToFolderSheet: View {
                 }
                 
                 let availableApps = appManager.items.filter { $0.type == .app }
+    .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
                 
                 if availableApps.isEmpty {
                     Text("No apps available in the launcher.")
