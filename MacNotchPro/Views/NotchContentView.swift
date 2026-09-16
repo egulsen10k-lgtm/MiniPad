@@ -1520,7 +1520,12 @@ struct LaunchpadItemCellView: View {
                             if appSettings.sortMode == .alphabetical { appSettings.sortMode = .custom }
                             
                             if item.isFolder {
-                                appManager.addMultipleItemsToFolder(sourceIds: sourceIds, folderId: item.id)
+                                // Prevent dragging folder onto folder (no nested folders)
+                                let sourceItems = appManager.items.filter { sourceIds.contains($0.id) }
+                                let sourceApps = sourceItems.filter { !$0.isFolder }
+                                if !sourceApps.isEmpty {
+                                    appManager.addMultipleItemsToFolder(sourceIds: Set(sourceApps.map { $0.id }), folderId: item.id)
+                                }
                             } else if isCircleFullyLoaded {
                                 if let singleId = sourceIds.first, singleId != item.id {
                                     appManager.createFolder(with: singleId, onto: item.id)
