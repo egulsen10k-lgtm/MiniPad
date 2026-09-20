@@ -1392,7 +1392,7 @@
   </script>
 <script>
 
-window.addEventListener('scroll',()=>{const pct=(window.scrollY/(document.documentElement.scrollHeight-window.innerHeight))*100;document.getElementById('scrollProgress').style.width=pct+"%");document.getElementById('backTop').classList.toggle("visible",window.scrollY>600);});
+window.addEventListener('scroll',()=>{let pct=0;const sh=document.documentElement.scrollHeight-window.innerHeight;if(sh>0)pct=(window.scrollY/sh)*100;document.getElementById('scrollProgress').style.width=pct+"%");document.getElementById('backTop').classList.toggle("visible",window.scrollY>600);});
 </script>
 <script>document.querySelector(".tabs")?.addEventListener("wheel", e => { e.stopPropagation(); }, { passive: true });</script></body>
 </html>
