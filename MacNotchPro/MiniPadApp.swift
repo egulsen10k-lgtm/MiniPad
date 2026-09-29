@@ -22,6 +22,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var statusItem: NSStatusItem?
     
     func applicationDidFinishLaunching(_ notification: Notification) {
+        // Single-instance guard: launching the .app while another copy is already
+        // running (e.g. from `swift run`) must not spawn a duplicate.
+        if activateExistingInstanceIfNeeded() {
+            NSApp.terminate(nil)
+            return
+        }
+
         // App starts in accessory mode (no Dock icon, status bar resident)
         NSApp.setActivationPolicy(.accessory)
         
@@ -31,6 +38,24 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self.notchWindow = NotchWindow()
             self.notchWindow?.show()
         }
+    }
+
+    /// Returns true when another MiniPad instance was found and activated.
+    private func activateExistingInstanceIfNeeded() -> Bool {
+        let currentPID = ProcessInfo.processInfo.processIdentifier
+        let myName = ProcessInfo.processInfo.processName
+
+        // Match both bundled launches (by bundle id) and bare `swift run`
+        // executables (which have no bundle id but share the process name).
+        let candidates = NSWorkspace.shared.runningApplications.filter { app in
+            guard app.processIdentifier != currentPID else { return false }
+            if app.bundleIdentifier == "com.minipad.app" { return true }
+            return app.localizedName == myName || app.bundleURL?.lastPathComponent == myName
+        }
+
+        guard let existing = candidates.first else { return false }
+        existing.activate(options: [])
+        return true
     }
     
     private func setupStatusItem() {
