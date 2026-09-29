@@ -1827,26 +1827,52 @@ struct FolderModalView: View {
                                 let isDraggingThis = draggedFolderPath == path
                                 
                                 VStack(spacing: 4) {
-                                    Image(nsImage: appManager.icon(for: path))
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: 40, height: 40)
-                                    
+                                    ZStack(alignment: .topTrailing) {
+                                        Image(nsImage: appManager.icon(for: path))
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: 40, height: 40)
+
+                                        // Clear remove affordance on the icon corner
+                                        Button {
+                                            withAnimation(appSettings.animationStyle.spring) {
+                                                appManager.removeItemFromFolder(appPath: path, folderId: folder.id)
+                                            }
+                                        } label: {
+                                            Image(systemName: "xmark.circle.fill")
+                                                .font(.system(size: 13, weight: .bold))
+                                                .foregroundStyle(.white)
+                                                .background(Circle().fill(Color.red.opacity(0.92)))
+                                                .frame(width: 16, height: 16)
+                                        }
+                                        .buttonStyle(.plain)
+                                        .help("Remove from folder")
+                                        .offset(x: 5, y: -5)
+                                    }
+                                    .frame(width: 44, height: 44)
+
                                     Text(name)
                                         .font(.system(size: 9.5, weight: .medium))
                                         .foregroundColor(textColor)
                                         .lineLimit(2)
                                         .multilineTextAlignment(.center)
                                         .frame(height: 28)
-                                    
-                                    Button("Remove") {
+                                }
+                                .contentShape(Rectangle())
+                                .contextMenu {
+                                    Button("Remove from Folder") {
                                         withAnimation(appSettings.animationStyle.spring) {
                                             appManager.removeItemFromFolder(appPath: path, folderId: folder.id)
                                         }
                                     }
-                                    .font(.system(size: 8))
-                                    .foregroundColor(textColor.opacity(0.5))
-                                    .buttonStyle(.plain)
+                                    Divider()
+                                    Button("Open App") {
+                                        appManager.launchApp(at: path) { onClose(); onAppLaunched() }
+                                    }
+                                }
+                                .onDrag {
+                                    draggedFolderPath = path
+                                    return NSItemProvider(object: path as NSString)
                                 }
                                 .padding(6)
                                 .frame(height: 100)
@@ -1975,6 +2001,7 @@ struct TransferAppsToFolderSheet: View {
     var onClose: () -> Void
     
     @State private var selectedAppIds: Set<String> = []
+    @State private var searchText: String = ""
     
     var body: some View {
         ZStack {

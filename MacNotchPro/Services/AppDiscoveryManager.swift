@@ -612,6 +612,17 @@ class AppDiscoveryManager: ObservableObject {
         filterItems()
     }
     
+    /// Removes an app from whichever folder currently contains it.
+    /// Used when a folder's app is dragged out onto the main grid.
+    @discardableResult
+    func removeAppFromContainingFolderIfNeeded(appPath: String) -> Bool {
+        guard let folder = items.first(where: { $0.subAppPaths?.contains(appPath) == true }) else {
+            return false
+        }
+        removeItemFromFolder(appPath: appPath, folderId: folder.id)
+        return true
+    }
+
     func addItemToFolder(sourceId: String, folderId: String) {
         guard let sourceIndex = items.firstIndex(where: { $0.id == sourceId }),
               let folderIndex = items.firstIndex(where: { $0.id == folderId }),
@@ -651,37 +662,33 @@ class AppDiscoveryManager: ObservableObject {
     
     func removeItemFromFolder(appPath: String, folderId: String) {
         guard let folderIndex = items.firstIndex(where: { $0.id == folderId }) else { return }
-        
+
         var folder = items[folderIndex]
         folder.subAppPaths?.removeAll { $0 == appPath }
-        
+
         let appName = allAppsCache[appPath]?.name ?? (appPath as NSString).lastPathComponent
         let extractedApp = LaunchpadItem(id: appPath, name: appName, type: .app, path: appPath, subAppPaths: nil)
-        items.insert(extractedApp, at: folderIndex + 1)
-        
-        // If there is only 1 app left in the folder, automatically delete the folder and reveal the remaining app!
-        if let remaining = folder.subAppPaths, remaining.count <= 1 {
-            if remaining.count == 1, let lastPath = remaining.first {
-                let lastName = allAppsCache[lastPath]?.name ?? (lastPath as NSString).lastPathComponent
-                let lastApp = LaunchpadItem(id: lastPath, name: lastName, type: .app, path: lastPath, subAppPaths: nil)
-                items[folderIndex] = lastApp
-            } else {
-                items.remove(at: folderIndex)
-            }
+
+        // Drop the folder only when it is actually empty.
+        if folder.subAppPaths?.isEmpty == true {
+            items.remove(at: folderIndex)
             if activeFolder?.id == folderId {
                 activeFolder = nil
             }
+            // Put the app back into the grid right where the folder was.
+            items.insert(extractedApp, at: folderIndex)
         } else {
             items[folderIndex] = folder
+            items.insert(extractedApp, at: folderIndex + 1)
             if activeFolder?.id == folderId {
                 activeFolder = folder
             }
         }
-        
+
         saveLayout()
         filterItems()
     }
-    
+
     func renameFolder(folderId: String, newName: String) {
         guard let index = items.firstIndex(where: { $0.id == folderId }) else { return }
         items[index].name = newName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "Folder" : newName
