@@ -30,6 +30,20 @@ class MusicManager: ObservableObject {
         setupObservers()
         startPolling()
         updateNowPlaying()
+
+        NotificationCenter.default.addObserver(forName: Notification.Name("LaunchpadExpansionChanged"), object: nil, queue: .main) { [weak self] notif in
+            if let expanded = notif.userInfo?["isExpanded"] as? Bool {
+                if expanded {
+                    if self?.timer == nil {
+                        self?.startPolling()
+                        self?.updateNowPlaying()
+                    }
+                } else {
+                    self?.timer?.invalidate()
+                    self?.timer = nil
+                }
+            }
+        }
     }
     
     private func setupObservers() {

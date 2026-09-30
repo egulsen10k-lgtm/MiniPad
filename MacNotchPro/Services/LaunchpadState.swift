@@ -19,6 +19,11 @@ class LaunchpadState: ObservableObject {
                 isPinned = false
             }
         }
+        NotificationCenter.default.post(
+            name: Notification.Name("LaunchpadExpansionChanged"),
+            object: self,
+            userInfo: ["isExpanded": isExpanded]
+        )
     }
     
     func setExpanded(_ expanded: Bool) {
@@ -29,5 +34,10 @@ class LaunchpadState: ObservableObject {
                 isPinned = false
             }
         }
+        NotificationCenter.default.post(
+            name: Notification.Name("LaunchpadExpansionChanged"),
+            object: self,
+            userInfo: ["isExpanded": expanded]
+        )
     }
 }
